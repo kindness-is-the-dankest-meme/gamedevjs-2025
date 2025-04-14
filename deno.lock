@@ -1,0 +1,40 @@
+{
+  "version": "4",
+  "specifiers": {
+    "jsr:@std/http@*": "1.0.8",
+    "jsr:@std/path@*": "1.0.6",
+    "npm:@types/node@*": "22.12.0",
+    "npm:zod@*": "3.24.2"
+  },
+  "jsr": {
+    "@std/http@1.0.8": {
+      "integrity": "6ea1b2e8d33929967754a3b6d6c6f399ad6647d7bbb5a466c1eaf9b294a6ebcd"
+    },
+    "@std/path@1.0.6": {
+      "integrity": "ab2c55f902b380cf28e0eec501b4906e4c1960d13f00e11cfbcd21de15f18fed"
+    }
+  },
+  "npm": {
+    "@types/node@22.12.0": {
+      "integrity": "sha512-Fll2FZ1riMjNmlmJOdAyY5pUbkftXslB5DgEzlIuNaiWhXd00FhWxVC/r4yV/4wBb9JfImTu+jiSvXTkJ7F/gA==",
+      "dependencies": [
+        "undici-types"
+      ]
+    },
+    "undici-types@6.20.0": {
+      "integrity": "sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg=="
+    },
+    "zod@3.24.2": {
+      "integrity": "sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ=="
+    }
+  },
+  "redirects": {
+    "https://esm.sh/@swc/wasm": "https://esm.sh/@swc/wasm@1.11.20"
+  },
+  "remote": {
+    "https://esm.sh/@swc/wasm-web@1.11.20": "7f92baa81fcc738759ecb08f5917b639620338a2d55dda5aa5389c331d7374d0",
+    "https://esm.sh/@swc/wasm-web@1.11.20/denonext/wasm-web.mjs": "fee2b7895b638b0752acf9590ae41361cc21cedbb3518d63e6634f6d6cd0f209",
+    "https://esm.sh/@swc/wasm@1.11.20": "fc935a7d5408e61640cc5f5b31d64d4788b748f9937e06ae62b787e9a5b9e35a",
+    "https://esm.sh/@swc/wasm@1.11.20/denonext/wasm.mjs": "cc5dde3a885c5b475a606df8eaccacb3a0af0cba82cb955c4b8ccadba71687c3"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "tasks": {
+    "dev": "deno run -NR --watch main.ts"
+  },
+  "imports": {},
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"]
+  }
+}
