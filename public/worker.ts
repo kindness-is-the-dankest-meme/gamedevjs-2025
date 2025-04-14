@@ -1,2 +1,2 @@
-console.log("qux");
-self.postMessage("quux");
+console.log("foo");
+self.postMessage("bar");
