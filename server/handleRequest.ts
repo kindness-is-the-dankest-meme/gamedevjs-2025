@@ -73,7 +73,7 @@ const mapf = (url: string): [ParsedPath, string] => {
   ];
 };
 
-export const handleRequest = async ({ url }: Request): Promise<Response> => {
+export const hreq = async ({ url }: Request): Promise<Response> => {
   const [{ dir }, path] = mapf(url),
     ext = extname(path);
 
