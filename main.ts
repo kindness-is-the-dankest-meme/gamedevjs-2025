@@ -1,2 +1,2 @@
-import { hreq } from "./server/handleRequest.ts";
+import { hreq } from "./server/hreq.ts";
 Deno.serve(hreq);
