@@ -44,8 +44,8 @@ const compiled = (path: URL) =>
   Deno.readTextFile(path)
     .then((contents) => transform(contents))
     /**
-     * replace the trailing `ts` with `js` for any string that starts with `.`
-     * and ends with `ts`
+     * replace the trailing `ts` with `js` for any "double-quoted" string that
+     * starts with `.` and ends with `ts`
      */
     .then(({ code }) => code.replace(/"(\..*)\.ts"/g, '"$1.js"'));
 
