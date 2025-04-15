@@ -1,2 +1,2 @@
-const worker = new Worker("./worker.ts");
-worker.addEventListener("message", ({ data }) => console.log(data));
+const worky = new Worker("./worky.ts", { type: "module" });
+worky.addEventListener("message", ({ data }) => console.log(data));
