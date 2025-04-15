@@ -1,5 +1,5 @@
 import { STATUS_TEXT, type StatusCode } from "jsr:@std/http/status";
-import { format, join, parse } from "jsr:@std/path";
+import { extname, format, join, parse, type ParsedPath } from "jsr:@std/path";
 import { transform } from "https://esm.sh/@swc/wasm-typescript@1.11.21";
 
 type F<T> = T extends new (...args: infer A) => infer R
@@ -28,7 +28,7 @@ const walk = async function* (
     }
   }
 };
-const files = await Array.fromAsync(walk("public", Deno.mainModule));
+const fs = await Array.fromAsync(walk("public", Deno.mainModule));
 
 const MIME_TYPE = {
   [".css"]: "text/css",
@@ -48,11 +48,9 @@ const rile = (path: URL) =>
      */
     .then(({ code }) => code.replace(/"(\..*)\.ts"/g, '"$1.js"'));
 
-export const handleRequest = async (req: Request): Promise<Response> => {
-  const parsed = parse(decodeURIComponent(furl(req.url).pathname));
-  let { dir, ext, name } = parsed;
-
-  if (dir !== "/") return stat(403);
+const mapf = (url: string): [ParsedPath, string] => {
+  const parsed = parse(decodeURIComponent(furl(url).pathname));
+  let { ext, name } = parsed;
 
   if (ext === ".js") {
     ext = ".ts";
@@ -63,17 +61,24 @@ export const handleRequest = async (req: Request): Promise<Response> => {
     name = "index";
   }
 
-  const path = format({
-    base: name + ext,
-    dir: "public",
-    ext,
-    name,
-    root: "/",
-  });
+  return [
+    parsed,
+    format({
+      base: name + ext,
+      dir: "public",
+      ext,
+      name,
+      root: "/",
+    }),
+  ];
+};
 
-  if (!files.includes(path)) {
-    return stat(404);
-  }
+export const handleRequest = async ({ url }: Request): Promise<Response> => {
+  const [{ dir }, path] = mapf(url),
+    ext = extname(path);
+
+  if (dir !== "/") return stat(403);
+  if (!fs.includes(path)) return stat(404);
 
   switch (ext) {
     case ".css":
