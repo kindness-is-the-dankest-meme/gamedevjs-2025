@@ -40,7 +40,6 @@ const look = (el: Element): Tree => {
   };
 };
 
-console.log(JSON.stringify(look(m), null, 2));
-
 const worky = new Worker("./worky.ts", { type: "module" });
 worky.addEventListener("message", ({ data }) => console.log(data));
+worky.postMessage(look(m));
