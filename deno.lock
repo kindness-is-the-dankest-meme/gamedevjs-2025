@@ -1,0 +1,19 @@
+{
+  "version": "4",
+  "specifiers": {
+    "jsr:@std/http@*": "1.0.8",
+    "jsr:@std/path@*": "1.0.6"
+  },
+  "jsr": {
+    "@std/http@1.0.8": {
+      "integrity": "6ea1b2e8d33929967754a3b6d6c6f399ad6647d7bbb5a466c1eaf9b294a6ebcd"
+    },
+    "@std/path@1.0.6": {
+      "integrity": "ab2c55f902b380cf28e0eec501b4906e4c1960d13f00e11cfbcd21de15f18fed"
+    }
+  },
+  "remote": {
+    "https://esm.sh/@swc/wasm-typescript@1.11.21": "37ba5017d52b9af8584eb7e76f29509b5daf5a616afc15452cd07737bed670ab",
+    "https://esm.sh/@swc/wasm-typescript@1.11.21/denonext/wasm-typescript.mjs": "0c7f3318174785d7849b26750616edb51f6becbc9bcb020929d1db33ef7e9205"
+  }
+}
