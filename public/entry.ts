@@ -10,7 +10,7 @@ type Thng = {
 type Kids = (Thng | string)[];
 
 const { from } = Array,
-  { assign, fromEntries } = Object;
+  { assign, entries, fromEntries } = Object;
 
 const peek = (as: NamedNodeMap): { [k: string]: unknown } =>
   fromEntries(from(as, ({ name, value }) => [name, value]));
@@ -47,3 +47,21 @@ const scan = ({ tagName, attributes, childNodes }: Element): Thng =>
 const worky = new Worker("./worky.ts", { type: "module" });
 worky.addEventListener("message", ({ data }) => console.log(data));
 worky.postMessage(scan(m));
+
+const bild = (thng: Thng | string): Node => {
+  switch (typeof thng) {
+    case "object": {
+      const node = document.createElement(thng.rndr);
+      thng.data &&
+        entries(thng.data).forEach(([k, v]) => node.setAttribute(k, String(v)));
+      thng.kids && thng.kids.forEach((kid) => node.appendChild(bild(kid)));
+      return node;
+    }
+
+    case "string": {
+      return document.createTextNode(thng);
+    }
+  }
+};
+
+console.info(bild(scan(m)));
