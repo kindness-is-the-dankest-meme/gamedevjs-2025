@@ -2,8 +2,7 @@ import { STATUS_TEXT, type StatusCode } from "jsr:@std/http/status";
 import { extname, format, join, parse, type ParsedPath } from "jsr:@std/path";
 import { transform } from "https://esm.sh/@swc/wasm-typescript@1.11.21";
 
-type F<T> = T extends new (...args: infer A) => infer R
-  ? (...args: A) => R
+type F<T> = T extends new (...args: infer A) => infer R ? (...args: A) => R
   : never;
 
 const fres: F<typeof Response> = (body, init) => new Response(body, init);
@@ -16,7 +15,7 @@ const stat = (code: StatusCode) =>
 const furl: F<typeof URL> = (url, base) => new URL(url, base);
 const walk = async function* (
   dir: string,
-  base: string
+  base: string,
 ): AsyncGenerator<string> {
   for await (const entry of Deno.readDir(furl(dir, base))) {
     if (entry.isDirectory) {

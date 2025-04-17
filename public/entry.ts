@@ -41,7 +41,7 @@ const scan = ({ tagName, attributes, childNodes }: Element): Thng =>
     attributes.length && { data: peek(attributes) },
     childNodes.length && {
       kids: childNodes.values().reduce(kids, []),
-    }
+    },
   );
 
 const worky = new Worker("./worky.ts", { type: "module" });
@@ -51,9 +51,7 @@ worky.postMessage(scan(m));
 const bild = (thng: Thng | string): Node => {
   switch (typeof thng) {
     case "object": {
-      const node = document.createElement(thng.rndr);
-      thng.data &&
-        entries(thng.data).forEach(([k, v]) => node.setAttribute(k, String(v)));
+      const node = assign(document.createElement(thng.rndr), thng.data);
       thng.kids && thng.kids.forEach((kid) => node.appendChild(bild(kid)));
       return node;
     }
