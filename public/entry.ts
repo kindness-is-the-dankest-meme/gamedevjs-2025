@@ -10,7 +10,7 @@ type Thng = {
 type Kids = (Thng | string)[];
 
 const { from } = Array,
-  { assign, entries, fromEntries } = Object;
+  { assign, fromEntries } = Object;
 
 const peek = (as: NamedNodeMap): { [k: string]: unknown } =>
   fromEntries(from(as, ({ name, value }) => [name, value]));
