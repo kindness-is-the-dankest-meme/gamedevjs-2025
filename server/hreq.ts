@@ -1,9 +1,9 @@
-import { STATUS_TEXT, type StatusCode } from "jsr:@std/http/status";
-import { extname, format, join, normalize, parse } from "jsr:@std/path";
 import initSwc, {
   type Options,
   transform,
 } from "https://esm.sh/@swc/wasm-web@1.11.21";
+import { STATUS_TEXT, type StatusCode } from "jsr:@std/http/status";
+import { extname, format, join, normalize, parse } from "jsr:@std/path";
 
 type F<T> = T extends new (...args: infer A) => infer R ? (...args: A) => R
   : never;
