@@ -1,4 +1,4 @@
-import type { Data, Kids, Rndr, Thng } from "./lib/real.ts";
+import type { Child, Tag, Thing } from "./lib/real.ts";
 
 declare const m: HTMLElement;
 
@@ -17,12 +17,12 @@ const peek = (as: NamedNodeMap): { [k: string]: unknown } =>
 const trim = (x: string, start: boolean, end: boolean) =>
   start ? x.trimStart() : end ? x.trimEnd() : x;
 
-const kids = (
-  acc: Kids,
+const more = (
+  acc: Child[],
   node: ChildNode,
   i: number,
   { length }: Array<ChildNode>,
-): Kids => {
+): Child[] => {
   switch (node.nodeType) {
     case Node.ELEMENT_NODE: {
       acc.push(scan(node as Element));
@@ -51,12 +51,12 @@ const kids = (
   return acc;
 };
 
-const scan = ({ tagName, attributes, childNodes }: Element): Thng<Data> =>
+const scan = ({ tagName, attributes, childNodes }: Element): Thing =>
   assign(
-    { rndr: tagName.toLowerCase() as Rndr },
-    attributes.length && { data: peek(attributes) },
+    { tag: tagName.toLowerCase() as Tag },
+    attributes.length && { props: peek(attributes) },
     childNodes.length && {
-      kids: childNodes.values().toArray().reduce(kids, []),
+      children: childNodes.values().toArray().reduce(more, []),
     },
   );
 
@@ -67,17 +67,32 @@ worky.addEventListener(
 );
 worky.postMessage(scan(m));
 
-const bild = (thng: Thng<Data> | string): Node => {
-  switch (typeof thng) {
+const cnod = (thing: Thing): Node => {
+  switch (typeof thing.tag) {
+    case "function":
     case "object": {
-      const node = assign(document.createElement(thng.rndr), thng.data);
-      thng.kids &&
-        thng.kids.forEach((kid) => kid && node.appendChild(bild(kid)));
+      const node = document.createDocumentFragment();
+      thing.children &&
+        thing.children.forEach((t) => t && node.appendChild(bild(t)));
       return node;
     }
 
     case "string": {
-      return document.createTextNode(thng);
+      const node = assign(document.createElement(thing.tag), thing.props);
+      thing.children &&
+        thing.children.forEach((t) => t && node.appendChild(bild(t)));
+      return node;
+    }
+  }
+};
+const bild = (thing: Thing | string): Node => {
+  switch (typeof thing) {
+    case "object": {
+      return cnod(thing);
+    }
+
+    case "string": {
+      return document.createTextNode(thing);
     }
   }
 };
