@@ -23,6 +23,9 @@ const mapn = (x: string) => nameMap[x] ?? x;
 const peek = (as: NamedNodeMap): { [k: string]: unknown } =>
   fromEntries(from(as, ({ name, value }) => [mapn(name), value]));
 
+const trim = (x: string, start: boolean, end: boolean) =>
+  start ? x.trimStart() : end ? x.trimEnd() : x;
+
 const kids = (
   acc: Kids,
   node: ChildNode,
@@ -37,18 +40,19 @@ const kids = (
 
     case Node.TEXT_NODE: {
       const { data } = node as Text;
+
       /**
-       * only include nodes that *are not* a newline followed by all whitespace
+       * skip text nodes that are a newline followed by all whitespace
        */
-      if (!/^\n\s*$/.test(data)) {
-        /**
-         * trim whitespace from the begining of "first" text nodes and from
-         * the end of "last" text nodes
-         */
-        acc.push(
-          i === 0 ? data.trimStart() : i === length - 1 ? data.trimEnd() : data,
-        );
+      if (/^\n\s*$/.test(data)) {
+        break;
       }
+
+      /**
+       * trim whitespace from the begining of "first" text nodes and from
+       * the end of "last" text nodes
+       */
+      acc.push(trim(data, i === 0, i === length - 1));
       break;
     }
   }
