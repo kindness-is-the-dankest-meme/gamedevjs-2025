@@ -23,6 +23,7 @@ export const el = <T extends Data>(
   ...kids: Kid[]
 ): Kid =>
   assign(
-    { rndr, data },
+    { rndr },
+    data && { data },
     kids?.length && { kids },
   );
