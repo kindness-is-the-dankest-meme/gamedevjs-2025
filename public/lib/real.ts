@@ -1,30 +1,57 @@
-// deno-lint-ignore-file no-explicit-any
-
-export type Rndr = keyof (HTMLElementTagNameMap | SVGElementTagNameMap);
-export type Data = Record<PropertyKey, unknown> | null;
-
-type Kid = Thng<Data> | string | false | null | undefined;
-export type Kids = Kid[];
-
-export type Thng<T extends Data> = {
-  rndr: Rndr;
-  data?: T;
-  kids?: Kids;
-};
-
 export declare namespace JSX {
-  export type IntrinsicElements = { [tagName: string]: any };
-  export type Element = any;
+  export type IntrinsicElements = { [tag: string]: unknown };
+  export type Element = unknown;
 }
 
-const { assign } = Object;
-export const el = <T extends Data>(
-  rndr: Thng<T>["rndr"],
-  data: T,
-  ...kids: Kid[]
-): Kid =>
-  assign(
-    { rndr },
-    data && { data },
-    kids?.length && { kids },
+export type Props = Record<string, unknown>;
+export type Child = Thing | string;
+export type Tag =
+  | keyof (HTMLElementTagNameMap | SVGElementTagNameMap)
+  | ((data: Props | null, kids?: Child[]) => Thing);
+
+export type Thing = {
+  tag: Tag;
+  props?: Props;
+  children?: Child[];
+};
+
+// const { isArray } = Array;
+const { assign, hasOwn } = Object;
+
+const elf = (
+  tag: Tag,
+  props: Props | null,
+  children: Child[],
+): Child => {
+  if (typeof tag === "string") {
+    return assign(
+      { tag },
+      props ? { props } : null,
+      children.length && { children },
+    );
+  }
+
+  if (typeof tag === "function") {
+    const { tag: t, props: p, children: c } = tag(props ?? null, children);
+    return elf(t, p ?? null, c ?? []);
+  }
+
+  return tag;
+};
+
+export const el = (
+  tag: Tag,
+  props: Props | null,
+  ...children: Child[]
+): Child =>
+  elf(
+    tag,
+    props,
+    children.flat().map((m) => {
+      if (typeof m === "object" && hasOwn(m, "tag")) {
+        return elf(m.tag, m.props ?? null, m.children ?? []);
+      }
+
+      return m;
+    }),
   );
