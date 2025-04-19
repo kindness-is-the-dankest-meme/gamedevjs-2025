@@ -1,6 +1,9 @@
 import { STATUS_TEXT, type StatusCode } from "jsr:@std/http/status";
 import { extname, format, join, normalize, parse } from "jsr:@std/path";
-import initSwc, { transform } from "https://esm.sh/@swc/wasm-web@1.11.21";
+import initSwc, {
+  type Options,
+  transform,
+} from "https://esm.sh/@swc/wasm-web@1.11.21";
 
 type F<T> = T extends new (...args: infer A) => infer R ? (...args: A) => R
   : never;
@@ -39,52 +42,50 @@ const rope = (path: URL) =>
   Deno.open(path, { read: true }).then(({ readable }) => readable);
 
 const pext = (path: URL) => extname(path.pathname);
-const isrc = () => `import { el } from "./lib/real.ts";`;
+/**
+ * insert `import { el } from "./lib/real.ts";` for `tsx` files because we're
+ * using swc's `"pragma"` transform in `swco`
+ *
+ * @see https://github.com/swc-project/swc/issues/2663
+ */
+const isrc = (path: URL, code: string) =>
+  pext(path) === ".tsx" ? `import { el } from "./lib/real.ts";\n${code}` : code;
+/**
+ * replace the trailing `ts` or `tsx` with `js` for any "double-quoted" string
+ * matches that start with `.` and end with `ts` or `tsx`
+ */
+const rsfx = (code: string) => code.replace(/"(\..*)\.tsx?"/g, '"$1.js"');
 
 await initSwc();
+const swco: Options = {
+  jsc: {
+    parser: {
+      syntax: "typescript",
+      tsx: true,
+    },
+    // @ts-expect-error these types are just not up to date
+    target: "es2024",
+    loose: false,
+    minify: {
+      compress: false,
+      mangle: false,
+    },
+    transform: {
+      react: {
+        pragma: "el",
+      },
+    },
+  },
+  module: {
+    type: "es6",
+  },
+  minify: false,
+  isModule: true,
+};
 const rile = (path: URL) =>
   Deno.readTextFile(path)
-    .then((contents) =>
-      transform(contents, {
-        jsc: {
-          parser: {
-            syntax: "typescript",
-            tsx: true,
-          },
-          // @ts-expect-error these types are just not up to date
-          target: "es2024",
-          loose: false,
-          minify: {
-            compress: false,
-            mangle: false,
-          },
-          transform: {
-            react: {
-              pragma: "el",
-            },
-          },
-        },
-        module: {
-          type: "es6",
-        },
-        minify: false,
-        isModule: true,
-      })
-    )
-    /**
-     * insert `import { el } from "./lib/real.ts";` for `tsx` files because
-     * we're using swc's `"pragma"` transform above
-     * @see https://github.com/swc-project/swc/issues/2663
-     *
-     * replace the trailing `ts` or `tsx` with `js` for any "double-quoted"
-     * string matches that start with `.` and end with `ts` or `tsx`
-     */
-    .then(({ code }) =>
-      (pext(path) === ".tsx" ? `${isrc()}\n${code}` : code).replace(
-        /"(\..*)\.tsx?"/g,
-        '"$1.js"',
-      )
-    );
+    .then((contents) => transform(contents, swco))
+    .then(({ code }) => rsfx(isrc(path, code)));
 
 const frmt = (dir: string, name: string, ext: string) =>
   normalize(
@@ -96,7 +97,6 @@ const frmt = (dir: string, name: string, ext: string) =>
       root: "/",
     }),
   );
-
 const mapf = (url: string): [dir: string, ext: string, path: string] => {
   const parsed = parse(decodeURIComponent(furl(url).pathname)),
     { dir } = parsed;
