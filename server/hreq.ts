@@ -1,5 +1,5 @@
 import { STATUS_TEXT, type StatusCode } from "jsr:@std/http/status";
-import { format, join, normalize, parse } from "jsr:@std/path";
+import { extname, format, join, normalize, parse } from "jsr:@std/path";
 import initSwc, { transform } from "https://esm.sh/@swc/wasm-web@1.11.21";
 
 type F<T> = T extends new (...args: infer A) => infer R ? (...args: A) => R
@@ -37,6 +37,9 @@ const MIME_TYPE = {
 
 const rope = (path: URL) =>
   Deno.open(path, { read: true }).then(({ readable }) => readable);
+
+const pext = (path: URL) => extname(path.pathname);
+const isrc = () => `import { el } from "./lib/real.ts";`;
 
 await initSwc();
 const rile = (path: URL) =>
@@ -76,7 +79,12 @@ const rile = (path: URL) =>
      * replace the trailing `ts` or `tsx` with `js` for any "double-quoted"
      * string that starts with `.` and ends with `ts` or `tsx`
      */
-    .then(({ code }) => code.replace(/"(\..*)\.tsx?"/g, '"$1.js"'));
+    .then(({ code }) =>
+      (pext(path) === ".tsx" ? `${isrc()}\n${code}` : code).replace(
+        /"(\..*)\.tsx?"/g,
+        '"$1.js"',
+      )
+    );
 
 const frmt = (dir: string, name: string, ext: string) =>
   normalize(
