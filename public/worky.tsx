@@ -1,3 +1,13 @@
+import type { Kids } from "./lib/real.ts";
+
+const Item = (props: { key: string }, kids: Kids) => <li {...props}>{kids}</li>;
+const List = ({ items }: { items: string[] }) => (
+  <ul>
+    {items.map((i, j) => (
+      <Item key={j + ":" + i.toLocaleLowerCase().replace(/\W/g, "-")}>{i}</Item>
+    ))}
+  </ul>
+);
 const work = (
   <main id="m">
     <hr />
@@ -12,17 +22,20 @@ const work = (
           Some <b>more</b>
           <i>content</i>.
         </p>
-        <ul>
-          <li>An item</li>
-          <li>Another item</li>
-          <li>A third item</li>
-          <li>A fourth</li>
-        </ul>
+        <List
+          items={[
+            "An item",
+            "Another item",
+            "A third item",
+            "A fourth",
+          ]}
+        />
       </section>
       <footer>The footer</footer>
     </article>
   </main>
 );
+
 self.postMessage(work);
 self.addEventListener(
   "message",

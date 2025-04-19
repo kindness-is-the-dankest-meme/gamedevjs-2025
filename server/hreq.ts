@@ -55,6 +55,7 @@ const isrc = (path: URL, code: string) =>
  * matches that start with `.` and end with `ts` or `tsx`
  */
 const rsfx = (code: string) => code.replace(/"(\..*)\.tsx?"/g, '"$1.js"');
+const rexp = (code: string) => code.replace(/\nexport { };/g, "");
 
 await initSwc();
 const swco: Options = {
@@ -85,7 +86,7 @@ const swco: Options = {
 const rile = (path: URL) =>
   Deno.readTextFile(path)
     .then((contents) => transform(contents, swco))
-    .then(({ code }) => rsfx(isrc(path, code)));
+    .then(({ code }) => rexp(rsfx(isrc(path, code))));
 
 const frmt = (dir: string, name: string, ext: string) =>
   normalize(
