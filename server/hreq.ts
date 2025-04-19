@@ -43,62 +43,53 @@ const rile = (path: URL) =>
   Deno.readTextFile(path)
     .then((contents) =>
       transform(contents, {
-        "jsc": {
-          "parser": {
-            "syntax": "typescript",
-            "tsx": true,
+        jsc: {
+          parser: {
+            syntax: "typescript",
+            tsx: true,
           },
           // @ts-expect-error these types are just not up to date
-          "target": "es2024",
-          "loose": false,
-          "minify": {
-            "compress": false,
-            "mangle": false,
+          target: "es2024",
+          loose: false,
+          minify: {
+            compress: false,
+            mangle: false,
           },
-          "transform": {
-            "react": {
+          transform: {
+            react: {
               /**
                * still need to "manually" `import { el } from "./lib/real.ts";
                * @see https://github.com/swc-project/swc/issues/2663
                */
-              "runtime": "automatic",
-              "importSource": "real",
+              pragma: "el",
             },
           },
         },
-        "module": {
-          "type": "es6",
+        module: {
+          type: "es6",
         },
-        "minify": false,
-        "isModule": true,
+        minify: false,
+        isModule: true,
       })
     )
     /**
      * replace the trailing `ts` or `tsx` with `js` for any "double-quoted"
      * string that starts with `.` and ends with `ts` or `tsx`
      */
-    .then(({ code }) =>
-      code
-        .replace(/"(\..*)\.tsx?"/g, '"$1.js"')
-        .replace(
-          'import { jsx as _jsx } from "real/jsx-runtime";',
-          'import { el } from "./lib/real.js";',
-        )
-        .replace(/_jsx/g, "el")
-    );
+    .then(({ code }) => code.replace(/"(\..*)\.tsx?"/g, '"$1.js"'));
 
 const frmt = (dir: string, name: string, ext: string) =>
-  normalize(format({
-    base: name + ext,
-    dir: join("public", dir),
-    ext,
-    name,
-    root: "/",
-  }));
+  normalize(
+    format({
+      base: name + ext,
+      dir: join("public", dir),
+      ext,
+      name,
+      root: "/",
+    }),
+  );
 
-const mapf = (
-  url: string,
-): [dir: string, ext: string, path: string] => {
+const mapf = (url: string): [dir: string, ext: string, path: string] => {
   const parsed = parse(decodeURIComponent(furl(url).pathname)),
     { dir } = parsed;
   let { ext, name } = parsed;
