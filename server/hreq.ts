@@ -60,10 +60,6 @@ const rile = (path: URL) =>
           },
           transform: {
             react: {
-              /**
-               * still need to "manually" `import { el } from "./lib/real.ts";
-               * @see https://github.com/swc-project/swc/issues/2663
-               */
               pragma: "el",
             },
           },
@@ -76,8 +72,12 @@ const rile = (path: URL) =>
       })
     )
     /**
+     * insert `import { el } from "./lib/real.ts";` for `tsx` files because
+     * we're using swc's `"pragma"` transform above
+     * @see https://github.com/swc-project/swc/issues/2663
+     *
      * replace the trailing `ts` or `tsx` with `js` for any "double-quoted"
-     * string that starts with `.` and ends with `ts` or `tsx`
+     * string matches that start with `.` and end with `ts` or `tsx`
      */
     .then(({ code }) =>
       (pext(path) === ".tsx" ? `${isrc()}\n${code}` : code).replace(
