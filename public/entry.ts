@@ -1,16 +1,6 @@
 declare const m: HTMLElement;
 
-type Rndr = keyof (HTMLElementTagNameMap | SVGElementTagNameMap);
-type Data = Record<PropertyKey, unknown>;
-type Kid = Thng<Data> | string | false | null | undefined;
-
-type Thng<T extends Data> = {
-  rndr: Rndr;
-  data?: T;
-  kids?: Kid[];
-};
-
-type Kids = Kid[];
+import type { Data, Kids, Rndr, Thng } from "./lib/real.ts";
 
 const { from } = Array,
   { assign, fromEntries } = Object;

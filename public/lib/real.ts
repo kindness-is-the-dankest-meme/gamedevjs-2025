@@ -1,13 +1,15 @@
 // deno-lint-ignore-file no-explicit-any
 
-type Rndr = keyof (HTMLElementTagNameMap | SVGElementTagNameMap);
-type Data = Record<PropertyKey, unknown> | null;
-type Kid = Thng<Data> | false | null | undefined;
+export type Rndr = keyof (HTMLElementTagNameMap | SVGElementTagNameMap);
+export type Data = Record<PropertyKey, unknown> | null;
 
-type Thng<T extends Data> = {
+type Kid = Thng<Data> | string | false | null | undefined;
+export type Kids = Kid[];
+
+export type Thng<T extends Data> = {
   rndr: Rndr;
   data?: T;
-  kids?: Kid[];
+  kids?: Kids;
 };
 
 const { assign } = Object;
