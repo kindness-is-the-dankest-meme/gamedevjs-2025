@@ -10,6 +10,7 @@ const List = ({ items }: { items: string[] }) => (
     ))}
   </ul>
 );
+const P = (_: { key: string }, children: Child[]) => <p>{children}</p>;
 const App = () => (
   <main id="m">
     <List
@@ -27,11 +28,20 @@ const App = () => (
         <h2>A Subheading</h2>
       </header>
       <section>
-        <p>Some content.</p>
-        <p>
-          Some <b>more</b>
-          <i>content</i>.
-        </p>
+        {[
+          <P key="foo">Some content.</P>,
+          <P key="bar">
+            Some <b>more</b> <i>content</i>.
+          </P>,
+        ]}
+        <List
+          items={[
+            "An item",
+            "Another item",
+            "A third item",
+            "A fourth",
+          ]}
+        />
       </section>
       <footer>The footer</footer>
     </article>
@@ -43,6 +53,7 @@ self.postMessage(work);
 self.addEventListener(
   "message",
   ({ data }) => {
-    console.log(JSON.stringify(data) === JSON.stringify(work));
+    console.log(JSON.stringify(data));
+    console.log(JSON.stringify(work));
   },
 );

@@ -17,7 +17,7 @@ const peek = (as: NamedNodeMap): { [k: string]: unknown } =>
 const trim = (x: string, start: boolean, end: boolean) =>
   start ? x.trimStart() : end ? x.trimEnd() : x;
 
-const more = (
+const children = (
   acc: Child[],
   node: ChildNode,
   i: number,
@@ -56,7 +56,7 @@ const scan = ({ tagName, attributes, childNodes }: Element): Thing =>
     { tag: tagName.toLowerCase() as Tag },
     attributes.length && { props: peek(attributes) },
     childNodes.length && {
-      children: childNodes.values().toArray().reduce(more, []),
+      children: childNodes.values().toArray().reduce(children, []),
     },
   );
 
