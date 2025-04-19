@@ -1,14 +1,15 @@
-declare const m: HTMLElement;
-
 import type { Data, Kids, Rndr, Thng } from "./lib/real.ts";
 
-const { from } = Array,
-  { assign, fromEntries } = Object;
+declare const m: HTMLElement;
 
-const nameMap: Record<string, string> = {
-  ["class"]: "className",
-};
-const mapn = (x: string) => nameMap[x] ?? x;
+const { from } = Array;
+const { assign, fromEntries } = Object;
+
+const mapn = (
+  (ns: Record<string, string>) => (n: string) => ns[n] ?? n
+)({
+  class: "className",
+});
 
 const peek = (as: NamedNodeMap): { [k: string]: unknown } =>
   fromEntries(from(as, ({ name, value }) => [mapn(name), value]));
