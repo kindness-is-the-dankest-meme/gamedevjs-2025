@@ -39,10 +39,12 @@ const kids = (
       const { data } = node as Text;
       /**
        * only include nodes that *are not* a newline followed by all whitespace
-       * and trim whitespace from the begining of "first" text nodes and from
-       * the end of "last" text nodes
        */
       if (!/^\n\s*$/.test(data)) {
+        /**
+         * trim whitespace from the begining of "first" text nodes and from
+         * the end of "last" text nodes
+         */
         acc.push(
           i === 0 ? data.trimStart() : i === length - 1 ? data.trimEnd() : data,
         );
