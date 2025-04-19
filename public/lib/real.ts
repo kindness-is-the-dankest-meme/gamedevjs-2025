@@ -12,13 +12,12 @@ export type Thng<T extends Data> = {
   kids?: Kids;
 };
 
-const { assign } = Object;
-
 export declare namespace JSX {
   export type IntrinsicElements = { [tagName: string]: any };
   export type Element = any;
 }
 
+const { assign } = Object;
 export const el = <T extends Data>(
   rndr: Thng<T>["rndr"],
   data: T,
