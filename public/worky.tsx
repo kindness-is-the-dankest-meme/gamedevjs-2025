@@ -1,4 +1,4 @@
-self.postMessage(
+const work = (
   <main id="m">
     <hr />
     <article className="the-article">
@@ -21,6 +21,10 @@ self.postMessage(
       </section>
       <footer>The footer</footer>
     </article>
-  </main>,
+  </main>
 );
-self.addEventListener("message", ({ data }) => console.log(data));
+self.postMessage(work);
+self.addEventListener(
+  "message",
+  ({ data }) => console.log(JSON.stringify(data) === JSON.stringify(work)),
+);
