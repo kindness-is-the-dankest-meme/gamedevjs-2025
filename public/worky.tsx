@@ -31,7 +31,8 @@ const App = () => (
         {[
           <P key="foo">Some content.</P>,
           <P key="bar">
-            Some <b>more</b> <i>content</i>.
+            Some <b>more</b>
+            <i>content</i>.
           </P>,
         ]}
         <List
