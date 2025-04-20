@@ -71,13 +71,9 @@ const App = () => (
     <section>
       <header>
         <h1>Pond Game</h1>
-        <p>
-          {/* basic hud stuff, health, hunger, etc */}
-        </p>
+        <p>{/* basic hud stuff, health, hunger, etc */}</p>
       </header>
-      <nav>
-        {/* play / pause, menu screen? */}
-      </nav>
+      <nav>{/* play / pause, menu screen? */}</nav>
       <menu>
         <li>
           <input type="radio" id="oars" name="active-tool" checked />
@@ -93,13 +89,9 @@ const App = () => (
         </li>
       </menu>
       <aside>
-        <table>
-          {/* inventory? */}
-        </table>
+        <table>{/* inventory? */}</table>
       </aside>
-      <footer>
-        {/* contextual stuff */}
-      </footer>
+      <footer>{/* contextual stuff */}</footer>
     </section>
   </>
 );

@@ -33,7 +33,9 @@ const children = (
       const { data } = node as Text;
 
       /**
-       * skip text nodes that are a newline followed by all whitespace
+       * skip text nodes that are a newline followed by all whitespace, this
+       * actually results in some whitespace collapsing when inline elements are
+       * on separate lines in the document
        */
       if (/^\n\s*$/.test(data)) {
         break;
@@ -66,16 +68,13 @@ const scan = (el: Element | NodeListOf<ChildNode>): Thing =>
     );
 
 const worky = new Worker("./worky.ts", { type: "module" });
-worky.addEventListener(
-  "message",
-  ({ data }) => {
-    console.log(data);
-    const nextNode = bild(data);
-    m.firstChild
-      ? m.replaceChildren(nextNode, m.firstChild)
-      : m.appendChild(nextNode);
-  },
-);
+worky.addEventListener("message", ({ data }) => {
+  console.log(data);
+  const nextNode = bild(data);
+  m.firstChild
+    ? m.replaceChildren(nextNode, m.firstChild)
+    : m.appendChild(nextNode);
+});
 worky.postMessage(scan(m.childNodes));
 
 const svgs: string[] = [
