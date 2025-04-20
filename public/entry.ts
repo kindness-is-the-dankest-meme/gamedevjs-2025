@@ -5,10 +5,12 @@ declare const m: HTMLElement;
 const { from } = Array;
 const { assign, entries, fromEntries } = Object;
 
-const mapn = (
-  (ns: Record<string, string>) => (n: string) => ns[n] ?? n
-)({
+const amap = (ns: Record<string, string>) => (n: string) => ns[n] ?? n;
+const mapn = amap({
   class: "className",
+});
+const nmap = amap({
+  htmlFor: "for",
 });
 
 const peek = (as: NamedNodeMap): { [k: string]: unknown } =>
@@ -148,7 +150,7 @@ const spur = (n: Node, cs: Child[] | undefined): Node => (
 );
 
 const twig = (n: Element, ps: Props | null | undefined): Element => (
-  ps && entries(ps).forEach(([k, v]) => n.setAttribute(k, String(v))), n
+  ps && entries(ps).forEach(([k, v]) => n.setAttribute(nmap(k), String(v))), n
 );
 
 const limb = (tag: string): Element =>
