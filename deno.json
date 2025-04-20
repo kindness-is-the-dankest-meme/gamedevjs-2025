@@ -2,8 +2,12 @@
   "tasks": {
     "dev": "deno run -NR --watch main.ts"
   },
-  "imports": {},
+  "imports": {
+    "real/jsx-runtime": "./public/lib/real.ts"
+  },
   "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "real",
     "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"]
   }
 }

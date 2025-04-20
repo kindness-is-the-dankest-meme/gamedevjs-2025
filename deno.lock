@@ -13,7 +13,7 @@
     }
   },
   "remote": {
-    "https://esm.sh/@swc/wasm-typescript@1.11.21": "37ba5017d52b9af8584eb7e76f29509b5daf5a616afc15452cd07737bed670ab",
-    "https://esm.sh/@swc/wasm-typescript@1.11.21/denonext/wasm-typescript.mjs": "0c7f3318174785d7849b26750616edb51f6becbc9bcb020929d1db33ef7e9205"
+    "https://esm.sh/@swc/wasm-web@1.11.21": "91aec8a54aec0369ae9f748bf30163163ea8da42ec53b7af9074598d675f1c85",
+    "https://esm.sh/@swc/wasm-web@1.11.21/denonext/wasm-web.mjs": "d916bf5e9874b9a3b61bf5adf649b26782d737a83d21c460d7a2ede80e5fcaeb"
   }
 }
