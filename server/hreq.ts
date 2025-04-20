@@ -49,7 +49,9 @@ const pext = (path: URL) => extname(path.pathname);
  * @see https://github.com/swc-project/swc/issues/2663
  */
 const isrc = (path: URL, code: string) =>
-  pext(path) === ".tsx" ? `import { el } from "./lib/real.ts";\n${code}` : code;
+  pext(path) === ".tsx"
+    ? `import { el, frag } from "./lib/real.ts";\n${code}`
+    : code;
 /**
  * replace the trailing `ts` or `tsx` with `js` for any "double-quoted" string
  * matches that start with `.` and end with `ts` or `tsx`
@@ -74,6 +76,7 @@ const swco: Options = {
     transform: {
       react: {
         pragma: "el",
+        pragmaFrag: "frag",
       },
     },
   },
