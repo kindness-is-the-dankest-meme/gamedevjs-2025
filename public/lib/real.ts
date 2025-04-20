@@ -6,11 +6,11 @@ export declare namespace JSX {
 export type Props = Record<string, unknown>;
 export type Child = Thing | string;
 export type Tag =
-  | keyof (HTMLElementTagNameMap | SVGElementTagNameMap)
+  | keyof (HTMLElementTagNameMap & SVGElementTagNameMap)
   | ((data: Props | null, kids?: Child[]) => Thing);
 
 export type Thing = {
-  tag: Tag;
+  tag: Tag | null;
   props?: Props;
   children?: Child[];
 };
@@ -19,11 +19,11 @@ export type Thing = {
 const { assign, hasOwn } = Object;
 
 const elf = (
-  tag: Tag,
+  tag: Tag | null,
   props: Props | null,
   children: Child[],
 ): Child => {
-  if (typeof tag === "string") {
+  if (tag === null || typeof tag === "string") {
     return assign(
       { tag },
       props ? { props } : null,
@@ -39,8 +39,9 @@ const elf = (
   return tag;
 };
 
+export const frag = null;
 export const el = (
-  tag: Tag,
+  tag: Tag | null,
   props: Props | null,
   ...children: Child[]
 ): Child =>
