@@ -3,7 +3,15 @@ import initSwc, {
   transform,
 } from "https://esm.sh/@swc/wasm-web@1.11.21";
 import { STATUS_TEXT, type StatusCode } from "jsr:@std/http/status";
-import { extname, format, join, normalize, parse } from "jsr:@std/path";
+import {
+  dirname,
+  extname,
+  format,
+  join,
+  normalize,
+  parse,
+  relative,
+} from "jsr:@std/path";
 
 type F<T> = T extends new (...args: infer A) => infer R ? (...args: A) => R
   : never;
@@ -41,16 +49,22 @@ const MIME_TYPE = {
 const rope = (path: URL) =>
   Deno.open(path, { read: true }).then(({ readable }) => readable);
 
+// `lpat` is for "library path"
+const lpat = furl("public/lib/real.ts", Deno.mainModule).pathname;
+// `rsrc` is for "relative source"
+const rsrc = (path: URL) =>
+  relative(dirname(path.pathname), lpat).replace(/^([^\.])/, "./$1");
+// `pext` is for "path extension"
 const pext = (path: URL) => extname(path.pathname);
 /**
- * insert `import { el } from "./lib/real.ts";` for `tsx` files because we're
- * using swc's `"pragma"` transform in `swco`
+ * insert `import { el, frag } from "./lib/real.ts";` for `tsx` files because
+ * we're using swc's `"pragma"` and `"pragmaFrag"` transform in `swco`
  *
  * @see https://github.com/swc-project/swc/issues/2663
  */
 const isrc = (path: URL, code: string) =>
   pext(path) === ".tsx"
-    ? `import { el, frag } from "./lib/real.ts";\n${code}`
+    ? `import { el, frag } from "${rsrc(path)}";\n${code}`
     : code;
 /**
  * replace the trailing `ts` or `tsx` with `js` for any "double-quoted" string
