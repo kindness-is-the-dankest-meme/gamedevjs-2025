@@ -62,15 +62,13 @@ export const App = () => (
           <rect width="80" height="80" />
         </g>
       </defs>
-      <use href="#bri" transform="translate(0,0)" />
       <g>
-        <rect width="80" height="80" />
-        <path d="M 80 80 H 40 A 40 40 0 0 1 80 40 Z" />
+        <use href="#bri" transform="translate(0,0)" />
       </g>
     </svg>
     <section>
       <header>
-        <h1>Pond Game</h1>
+        <h1>pond game</h1>
         <p>{/* basic hud stuff, health, hunger, etc */}</p>
       </header>
       <nav>{/* play / pause, menu screen? */}</nav>
