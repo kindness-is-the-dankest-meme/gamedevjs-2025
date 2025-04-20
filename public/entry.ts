@@ -143,6 +143,7 @@ const svgs: string[] = [
   // "view",
 ] as const;
 
+// `cnod` is for "create node"
 const cnod = ({ tag, props, children }: El): Node => {
   switch (typeof tag) {
     case "function":
@@ -168,6 +169,8 @@ const cnod = ({ tag, props, children }: El): Node => {
     }
   }
 };
+
+// `bild` is for "build"
 const bild = (el: El | string): Node => {
   switch (typeof el) {
     case "object": {
