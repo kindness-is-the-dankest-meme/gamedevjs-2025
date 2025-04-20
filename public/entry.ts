@@ -1,4 +1,4 @@
-import type { Child, Tag, Thing } from "./lib/real.ts";
+import type { Child, El, Tag } from "./lib/real.ts";
 
 declare const m: HTMLElement;
 
@@ -53,7 +53,7 @@ const children = (
   return acc;
 };
 
-const scan = (el: Element | NodeListOf<ChildNode>): Thing =>
+const scan = (el: Element | NodeListOf<ChildNode>): El =>
   el instanceof Element
     ? assign(
       { tag: el.tagName.toLowerCase() as Tag },
@@ -143,41 +143,39 @@ const svgs: string[] = [
   // "view",
 ] as const;
 
-const cnod = (thing: Thing): Node => {
-  switch (typeof thing.tag) {
+const cnod = ({ tag, props, children }: El): Node => {
+  switch (typeof tag) {
     case "function":
     case "object": {
       const node = document.createDocumentFragment();
-      thing.children &&
-        thing.children.forEach((t) => t && node.appendChild(bild(t)));
+      children &&
+        children.forEach((t) => t && node.appendChild(bild(t)));
       return node;
     }
 
     case "string": {
       const node = document.createElementNS(
-        svgs.includes(thing.tag)
+        svgs.includes(tag)
           ? "http://www.w3.org/2000/svg"
           : "http://www.w3.org/1999/xhtml",
-        thing.tag,
+        tag,
       );
-      thing.props &&
-        entries(thing.props).forEach(([k, v]) =>
-          node.setAttribute(k, String(v))
-        );
-      thing.children &&
-        thing.children.forEach((t) => t && node.appendChild(bild(t)));
+      props &&
+        entries(props).forEach(([k, v]) => node.setAttribute(k, String(v)));
+      children &&
+        children.forEach((t) => t && node.appendChild(bild(t)));
       return node;
     }
   }
 };
-const bild = (thing: Thing | string): Node => {
-  switch (typeof thing) {
+const bild = (el: El | string): Node => {
+  switch (typeof el) {
     case "object": {
-      return cnod(thing);
+      return cnod(el);
     }
 
     case "string": {
-      return document.createTextNode(thing);
+      return document.createTextNode(el);
     }
   }
 };

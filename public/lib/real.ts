@@ -4,12 +4,12 @@ export declare namespace JSX {
 }
 
 export type Props = Record<string, unknown>;
-export type Child = Thing | string;
+export type Child = El | string;
 export type Tag =
   | keyof (HTMLElementTagNameMap & SVGElementTagNameMap)
-  | ((data: Props | null, kids?: Child[]) => Thing);
+  | ((data: Props | null, kids?: Child[]) => El);
 
-export type Thing = {
+export type El = {
   tag: Tag | null;
   props?: Props;
   children?: Child[];
@@ -18,41 +18,35 @@ export type Thing = {
 // const { isArray } = Array;
 const { assign, hasOwn } = Object;
 
-const elf = (
-  tag: Tag | null,
-  props: Props | null,
-  children: Child[],
-): Child => {
-  if (tag === null || typeof tag === "string") {
-    return assign(
-      { tag },
-      props ? { props } : null,
-      children.length && { children },
-    );
-  }
-
-  if (typeof tag === "function") {
-    const { tag: t, props: p, children: c } = tag(props ?? null, children);
-    return elf(t, p ?? null, c ?? []);
-  }
-
-  return tag;
-};
-
 export const frag = null;
+
 export const el = (
   tag: Tag | null,
   props: Props | null,
   ...children: Child[]
-): Child =>
-  elf(
-    tag,
-    props,
-    children.flat().map((m) => {
-      if (typeof m === "object" && hasOwn(m, "tag")) {
-        return elf(m.tag, m.props ?? null, m.children ?? []);
-      }
+): Child => {
+  const cs = children.flat();
 
-      return m;
-    }),
-  );
+  if (tag === null || typeof tag === "string") {
+    return assign(
+      { tag },
+      props ? { props } : null,
+      cs.length && {
+        children: cs.map((c) => {
+          if (typeof c === "object" && hasOwn(c, "tag")) {
+            return el(c.tag, c.props ?? null, ...(c.children ?? []));
+          }
+
+          return c;
+        }),
+      },
+    );
+  }
+
+  if (typeof tag === "function") {
+    const { tag: t, props: p, children: c } = tag(props ?? null, cs);
+    return el(t, p ?? null, ...(c ?? []));
+  }
+
+  return tag;
+};
