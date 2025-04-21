@@ -28,6 +28,10 @@ body {
   overflow: hidden;
 }
 
+main {
+  background: hsl(100, 40%, 60%);
+}
+
 section {
   position: absolute;
   top: 0;
@@ -41,12 +45,6 @@ menu {
   padding: 0;
 }
 
-rect {
-  fill: hsl(100, 40%, 60%);
-}
-
-path,
-rect:nth-of-type(2),
-#i rect {
+path {
   fill: white;
 }
