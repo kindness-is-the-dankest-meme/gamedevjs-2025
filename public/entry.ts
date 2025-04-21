@@ -1,14 +1,18 @@
-import type { Child, El, Tag } from "./lib/real.ts";
+import { z } from "https://esm.sh/zod@3.24.3";
+import type { Child, El, Props, Tag } from "./lib/real.ts";
 
 declare const m: HTMLElement;
 
 const { from } = Array;
 const { assign, entries, fromEntries } = Object;
 
-const mapn = (
-  (ns: Record<string, string>) => (n: string) => ns[n] ?? n
-)({
+const amap = (ns: Record<string, string>) => (n: string) => ns[n] ?? n;
+const mapn = amap({
   class: "className",
+});
+const nmap = amap({
+  htmlFor: "for",
+  key: "data-key",
 });
 
 const peek = (as: NamedNodeMap): { [k: string]: unknown } =>
@@ -67,15 +71,21 @@ const scan = (el: Element | NodeListOf<ChildNode>): El =>
       el.length && { children: el.values().toArray().reduce(children, []) },
     );
 
+const { requestAnimationFrame: raf, cancelAnimationFrame: caf } = globalThis;
+let frameId = 0;
+
 const worky = new Worker("./worky.ts", { type: "module" });
-worky.addEventListener("message", ({ data }) => {
-  console.log(data);
-  const nextNode = bild(data);
-  m.firstChild
-    ? m.replaceChildren(nextNode, m.firstChild)
-    : m.appendChild(nextNode);
-});
-worky.postMessage(scan(m.childNodes));
+worky.addEventListener(
+  "message",
+  ({ data }) => {
+    caf(frameId);
+    frameId = raf(() => {
+      const nextNode = grow(data);
+      m.firstChild ? m.replaceChildren(nextNode) : m.appendChild(nextNode);
+    });
+  },
+);
+// worky.postMessage(scan(m.childNodes));
 
 const svgs: string[] = [
   // "a",
@@ -143,42 +153,76 @@ const svgs: string[] = [
   // "view",
 ] as const;
 
-// `cnod` is for "create node"
-const cnod = ({ tag, props, children }: El): Node => {
+const spur = (n: Node, cs: Child[] | undefined): Node => (
+  cs && cs.forEach((c) => n.appendChild(grow(c))), n
+);
+
+const twig = (n: Element, ps: Props | null | undefined): Element => (
+  ps && entries(ps).forEach(([k, v]) => n.setAttribute(nmap(k), String(v))), n
+);
+
+const limb = (tag: string): Element =>
+  document.createElementNS(
+    svgs.includes(tag)
+      ? "http://www.w3.org/2000/svg"
+      : "http://www.w3.org/1999/xhtml",
+    tag,
+  );
+
+const tuft = () => document.createDocumentFragment();
+
+const tree = ({ tag, props, children }: El): Node => {
   switch (typeof tag) {
+    /**
+     * `typeof tag` is never actually `"function"` at this point, it's always
+     * already been interpreted by now, but the type of `El["tag"]` includes the
+     * function `Tag` type
+     *
+     * `typeof tag` is only `"object"` if `tag` is `null` , so this branch
+     * really _only_ handles document fragments
+     */
     case "function":
     case "object": {
-      const node = document.createDocumentFragment();
-      children &&
-        children.forEach((t) => t && node.appendChild(bild(t)));
-      return node;
+      return spur(tuft(), children);
     }
 
     case "string": {
-      const node = document.createElementNS(
-        svgs.includes(tag)
-          ? "http://www.w3.org/2000/svg"
-          : "http://www.w3.org/1999/xhtml",
-        tag,
-      );
-      props &&
-        entries(props).forEach(([k, v]) => node.setAttribute(k, String(v)));
-      children &&
-        children.forEach((t) => t && node.appendChild(bild(t)));
-      return node;
+      return spur(twig(limb(tag), props), children);
     }
   }
 };
 
-// `bild` is for "build"
-const bild = (el: El | string): Node => {
+const leaf = (t: string): Text => document.createTextNode(t);
+
+const grow = (el: El | string): Node => {
   switch (typeof el) {
     case "object": {
-      return cnod(el);
+      return tree(el);
     }
 
     case "string": {
-      return document.createTextNode(el);
+      return leaf(el);
     }
   }
 };
+
+const Size = z
+  .object({
+    innerWidth: z.number(),
+    innerHeight: z.number(),
+  })
+  .transform(({ innerWidth: width, innerHeight: height }) => ({
+    width,
+    height,
+  }));
+
+globalThis.addEventListener("resize", ({ target, type }) => {
+  const { width, height } = Size.parse(target);
+  worky.postMessage({ type, width, height });
+});
+
+globalThis.dispatchEvent(new Event("resize"));
+globalThis.addEventListener(
+  "click",
+  () => globalThis.dispatchEvent(new Event("resize")),
+);

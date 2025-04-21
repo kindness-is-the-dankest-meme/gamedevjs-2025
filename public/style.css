@@ -18,6 +18,12 @@ html {
 
 html,
 body,
+main {
+  background: hsl(100, 40%, 60%);
+}
+
+html,
+body,
 main,
 section {
   height: 100%;
@@ -42,11 +48,9 @@ menu {
 }
 
 rect {
-  fill: hsl(100, 40%, 60%);
+  stroke: white;
 }
 
-path,
-rect:nth-of-type(2),
-#i rect {
+path {
   fill: white;
 }
