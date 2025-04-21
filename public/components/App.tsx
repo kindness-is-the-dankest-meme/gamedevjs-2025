@@ -7,7 +7,7 @@ type AppProps = {
 };
 
 const { floor } = Math;
-const size = 80;
+const size = 20;
 
 export const App = ({ width, height }: AppProps) => (
   <>
