@@ -10,8 +10,14 @@ const ResizeEvent = z.object({
 self.addEventListener(
   "message",
   ({ data }) => {
-    const { type, width, height } = ResizeEvent.parse(data);
+    const { success, data: event, error } = ResizeEvent.safeParse(data);
+    if (!success) {
+      console.error(error);
+      console.info({ data });
+      return;
+    }
 
+    const { type, width, height } = event;
     if (type === "resize") {
       self.postMessage(<App width={width} height={height} />);
     }
