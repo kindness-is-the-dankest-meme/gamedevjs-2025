@@ -18,6 +18,12 @@ html {
 
 html,
 body,
+main {
+  background: hsl(100, 40%, 60%);
+}
+
+html,
+body,
 main,
 section {
   height: 100%;
@@ -26,10 +32,6 @@ section {
 body {
   margin: 0;
   overflow: hidden;
-}
-
-main {
-  background: hsl(100, 40%, 60%);
 }
 
 section {
