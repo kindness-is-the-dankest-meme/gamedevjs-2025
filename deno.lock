@@ -12,8 +12,13 @@
       "integrity": "ab2c55f902b380cf28e0eec501b4906e4c1960d13f00e11cfbcd21de15f18fed"
     }
   },
+  "redirects": {
+    "https://esm.sh/zod": "https://esm.sh/zod@3.24.3"
+  },
   "remote": {
     "https://esm.sh/@swc/wasm-web@1.11.21": "91aec8a54aec0369ae9f748bf30163163ea8da42ec53b7af9074598d675f1c85",
-    "https://esm.sh/@swc/wasm-web@1.11.21/denonext/wasm-web.mjs": "d916bf5e9874b9a3b61bf5adf649b26782d737a83d21c460d7a2ede80e5fcaeb"
+    "https://esm.sh/@swc/wasm-web@1.11.21/denonext/wasm-web.mjs": "d916bf5e9874b9a3b61bf5adf649b26782d737a83d21c460d7a2ede80e5fcaeb",
+    "https://esm.sh/zod@3.24.3": "8fb963869b1a83e910ff2fc4e64af7918e34b1350088455141b653233f274395",
+    "https://esm.sh/zod@3.24.3/denonext/zod.mjs": "46c4acb1f87caf349962b648f519cbf3999a8746fb40df0331ad2d3b62a197c0"
   }
 }
