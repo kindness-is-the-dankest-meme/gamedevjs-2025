@@ -229,7 +229,8 @@ const genp = (cols: number, rows: number) =>
 
       // prefer straight lines as neighbors to corners
       if (
-        (nu === "▗" || nu === "▜" || nd === "▝" || nd === "▟") &&
+        (nu === "▗" || nu === "▜" || nu === "▚" ||
+          nd === "▝" || nd === "▟" || nd === "▞") &&
         as.includes("▐")
       ) {
         if (odds(9 / 10)) {
@@ -239,7 +240,8 @@ const genp = (cols: number, rows: number) =>
       }
 
       if (
-        (nu === "▖" || nu === "▛" || nd === "▘" || nd === "▙") &&
+        (nu === "▖" || nu === "▛" || nu === "▞" ||
+          nd === "▘" || nd === "▙" || nd === "▚") &&
         as.includes("▌")
       ) {
         if (odds(9 / 10)) {
@@ -250,7 +252,8 @@ const genp = (cols: number, rows: number) =>
 
       // prefer straight lines as neighbors to corners
       if (
-        (nr === "▖" || nr === "▟" || nl === "▗" || nl === "▙") &&
+        (nr === "▖" || nr === "▟" || nr === "▞" ||
+          nl === "▗" || nl === "▙" || nl === "▚") &&
         as.includes("▄")
       ) {
         if (odds(9 / 10)) {
@@ -260,7 +263,8 @@ const genp = (cols: number, rows: number) =>
       }
 
       if (
-        (nr === "▘" || nr === "▜" || nl === "▝" || nl === "▛") &&
+        (nr === "▘" || nr === "▜" || nr === "▚" ||
+          nl === "▝" || nl === "▛" || nl === "▞") &&
         as.includes("▀")
       ) {
         if (odds(9 / 10)) {
