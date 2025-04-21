@@ -19,9 +19,69 @@ const tiles = (s: number) => {
     ["│o", `M ${hs} 0 H ${s} V ${s} H ${hs} Z`],
     ["─i", `M 0 0 V ${hs} H ${s} V 0 Z`],
     ["─o", `M 0 ${hs} V ${s} H ${s} V ${hs} Z`],
-    ["■", `M 0 0 H ${s} V ${s} H 0 Z`],
+    ["■i", `M 0 0 H ${s} V ${s} H 0 Z`],
+    ["□o"],
   ];
 };
+
+/**
+ * ∙ ╭ ─ ─ ╮ ∙
+ * ╭ ╯ ∙ ∙ ╰ ╮
+ * │ ∙ ╭ ╮ ∙ │
+ * │ ∙ ╰ ╯ ∙ │
+ * ╰ ╮ ∙ ∙ ╭ ╯
+ * ∙ ╰ ─ ─ ╯ ∙
+ */
+const allowedNeighbors = {
+  "╭": {
+    up: "∙─╯╰",
+    right: "─╮╯",
+    down: "│╯╰",
+    left: "∙│╯╮",
+  },
+  "╮": {
+    up: "∙─╯╰",
+    right: "∙│╭╰",
+    down: "│╯╰",
+    left: "╭╰─",
+  },
+  "╯": {
+    up: "│╮╭",
+    right: "∙│╭╰",
+    down: "∙─╮╭",
+    left: "╭╰─",
+  },
+  "╰": {
+    up: "│╮╭",
+    right: "─╮╯",
+    down: "∙─╮╭",
+    left: "∙│╯╮",
+  },
+  "│": {
+    up: "│╮╭",
+    right: "∙│╭╰",
+    down: "│╯╰",
+    left: "∙│╯╮",
+  },
+  "─": {
+    up: "∙─╯╰",
+    right: "─╮╯",
+    down: "∙─╮╭",
+    left: "╭╰─",
+  },
+  "■": {
+    up: "∙─╯╰",
+    right: "∙│╭╰",
+    down: "∙─╮╭",
+    left: "∙│╯╮",
+  },
+  "□": {
+    up: "∙─╯╰",
+    right: "∙│╭╰",
+    down: "∙─╮╭",
+    left: "∙│╯╮",
+  },
+} as const;
 
 export const Pond = ({ cols, rows, size }: PondProps) => (
   <svg
@@ -35,12 +95,9 @@ export const Pond = ({ cols, rows, size }: PondProps) => (
       {tiles(size).map(([id, d]) => (
         <g id={id} key={id}>
           <rect width={size} height={size} />
-          <path d={d} />
+          {d && <path d={d} />}
         </g>
       ))}
-      <g id="□">
-        <rect width={size} height={size} />
-      </g>
     </defs>
     <g>
       <use href="#╭i" transform="translate(0,0)" />
@@ -59,8 +116,8 @@ export const Pond = ({ cols, rows, size }: PondProps) => (
       <use href="#│o" transform="translate(80,160)" />
       <use href="#─i" transform="translate(160,160)" />
       <use href="#─o" transform="translate(240,160)" />
-      <use href="#■" transform="translate(0,240)" />
-      <use href="#□" transform="translate(80,240)" />
+      <use href="#■i" transform="translate(0,240)" />
+      <use href="#□o" transform="translate(80,240)" />
     </g>
     <g transform="translate(320,0)">
       <use href="#╭i" transform="translate(0,0)" />
@@ -75,8 +132,8 @@ export const Pond = ({ cols, rows, size }: PondProps) => (
       <use href="#─i" transform="translate(80,160)" />
       <use href="#│o" transform="translate(160,160)" />
       <use href="#│i" transform="translate(240,160)" />
-      <use href="#□" transform="translate(0,240)" />
-      <use href="#■" transform="translate(80,240)" />
+      <use href="#□o" transform="translate(0,240)" />
+      <use href="#■i" transform="translate(80,240)" />
     </g>
   </svg>
 );
