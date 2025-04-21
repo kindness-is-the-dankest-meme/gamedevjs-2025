@@ -205,23 +205,37 @@ const genp = (cols: number, rows: number) =>
         (ad === "" || ad.includes(t)) && (al === "" || al.includes(t))
       ).join("");
 
-      // prefer empty spaces as neighbors to straight lines
-      if (
-        (nu === "▀" || nr === "▐" || nd === "▄" || nl === "▌") &&
-        as.includes("∙")
-      ) {
-        if (odds(7 / 10)) {
-          acc[j] = "∙";
-          return acc;
-        }
-      }
+      // // prefer empty spaces as neighbors to straight lines
+      // if (
+      //   (nu === "▀" || nr === "▐" || nd === "▄" || nl === "▌") &&
+      //   as.includes("∙")
+      // ) {
+      //   if (odds(7 / 10)) {
+      //     acc[j] = "∙";
+      //     return acc;
+      //   }
+      // }
 
-      // prefer filled spaces as neighbors to straight lines
+      // // prefer filled spaces as neighbors to straight lines
+      // if (
+      //   (nu === "▄" || nr === "▌" || nd === "▀" || nl === "▐") &&
+      //   as.includes("█")
+      // ) {
+      //   if (odds(7 / 10)) {
+      //     acc[j] = "█";
+      //     return acc;
+      //   }
+      // }
+
+      // prefer filled spaces as neighbors to filled spaces
       if (
-        (nu === "▄" || nr === "▌" || nd === "▀" || nl === "▐") &&
+        (nu === "█" || nr === "█" || nd === "█" || nl === "█" ||
+          nu === "▟" || nr === "▟" || nd === "▜" || nl === "▜" ||
+          nu === "▙" || nr === "▙" || nd === "▛" || nl === "▛" ||
+          nu === "▄" || nr === "▌" || nd === "▀" || nl === "▐") &&
         as.includes("█")
       ) {
-        if (odds(7 / 10)) {
+        if (odds(9 / 10)) {
           acc[j] = "█";
           return acc;
         }
@@ -283,17 +297,6 @@ const genp = (cols: number, rows: number) =>
       //     return acc;
       //   }
       // }
-
-      // prefer filled spaces as neighbors to filled spaces
-      if (
-        (nu === "█" || nr === "█" || nd === "█" || nl === "█") &&
-        as.includes("█")
-      ) {
-        if (odds(9 / 10)) {
-          acc[j] = "█";
-          return acc;
-        }
-      }
 
       // // prefer continuing vertical lines
       // if (nu === "▌" && as.includes("▌")) {
