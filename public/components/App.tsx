@@ -12,6 +12,6 @@ const size = 20;
 export const App = ({ width, height }: AppProps) => (
   <>
     <Pond cols={floor(width / size)} rows={floor(height / size)} size={size} />
-    <Hud />
+    {/* <Hud /> */}
   </>
 );

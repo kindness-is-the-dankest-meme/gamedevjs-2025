@@ -222,5 +222,5 @@ globalThis.addEventListener("resize", ({ target, type }) => {
 });
 
 const regenerate = () => globalThis.dispatchEvent(new Event("resize"));
-globalThis.addEventListener("pointerup", regenerate);
+m.addEventListener("pointerup", regenerate);
 regenerate();
