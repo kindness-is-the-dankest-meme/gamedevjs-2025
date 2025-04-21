@@ -7,7 +7,7 @@ export type Props = Record<string, unknown>;
 export type Child = El | string;
 export type Tag =
   | keyof (HTMLElementTagNameMap & SVGElementTagNameMap)
-  | ((data: Props | null, kids?: Child[]) => El);
+  | ((data: Props | null, children: Child[]) => El);
 
 export type El = {
   tag: Tag | null;
@@ -19,6 +19,12 @@ export type El = {
 const { assign, hasOwn } = Object;
 
 export const frag = null;
+export const Frag = (props?: Props, children?: Child[]) =>
+  el(
+    frag,
+    props ?? null,
+    ...(children ?? []),
+  );
 
 export const el = (
   tag: Tag | null,
