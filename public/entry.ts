@@ -71,12 +71,18 @@ const scan = (el: Element | NodeListOf<ChildNode>): El =>
       el.length && { children: el.values().toArray().reduce(children, []) },
     );
 
+const { requestAnimationFrame: raf, cancelAnimationFrame: caf } = globalThis;
+let frameId = 0;
+
 const worky = new Worker("./worky.ts", { type: "module" });
 worky.addEventListener(
   "message",
   ({ data }) => {
-    const nextNode = grow(data);
-    m.firstChild ? m.replaceChildren(nextNode) : m.appendChild(nextNode);
+    caf(frameId);
+    frameId = raf(() => {
+      const nextNode = grow(data);
+      m.firstChild ? m.replaceChildren(nextNode) : m.appendChild(nextNode);
+    });
   },
 );
 // worky.postMessage(scan(m.childNodes));
