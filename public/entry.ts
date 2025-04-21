@@ -1,3 +1,4 @@
+import { z } from "https://esm.sh/zod@3.24.3";
 import type { Child, El, Props, Tag } from "./lib/real.ts";
 
 declare const m: HTMLElement;
@@ -70,13 +71,10 @@ const scan = (el: Element | NodeListOf<ChildNode>): El =>
     );
 
 const worky = new Worker("./worky.ts", { type: "module" });
-worky.addEventListener("message", ({ data }) => {
-  console.log(data);
-  const nextNode = grow(data);
-  m.firstChild
-    ? m.replaceChildren(nextNode, m.firstChild)
-    : m.appendChild(nextNode);
-});
+worky.addEventListener(
+  "message",
+  ({ data }) => (m.firstChild ? m.replaceChildren : m.appendChild)(grow(data)),
+);
 worky.postMessage(scan(m.childNodes));
 
 const svgs: string[] = [
@@ -193,3 +191,20 @@ const grow = (el: El | string): Node => {
     }
   }
 };
+
+const Size = z
+  .object({
+    innerWidth: z.number(),
+    innerHeight: z.number(),
+  })
+  .transform(({ innerWidth: width, innerHeight: height }) => ({
+    width,
+    height,
+  }));
+
+globalThis.addEventListener("resize", ({ target, type }) => {
+  const { width, height } = Size.parse(target);
+  worky.postMessage({ type, width, height });
+});
+
+globalThis.dispatchEvent(new Event("resize"));
