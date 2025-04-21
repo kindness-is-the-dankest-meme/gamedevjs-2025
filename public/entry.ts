@@ -167,11 +167,15 @@ const tuft = () => document.createDocumentFragment();
 
 const tree = ({ tag, props, children }: El): Node => {
   switch (typeof tag) {
-    // n.b. `typeof tag` is never actually `"function"` at this point, it's
-    // always already been interpreted by now, but the type of `El["tag"]`
-    // includes the function type of Tag
+    /**
+     * `typeof tag` is never actually `"function"` at this point, it's always
+     * already been interpreted by now, but the type of `El["tag"]` includes the
+     * function `Tag` type
+     *
+     * `typeof tag` is only `"object"` if `tag` is `null` , so this branch
+     * really _only_ handles document fragments
+     */
     case "function":
-    // n.b. `typeof tag` is only `"object"` if `tag` is `null`
     case "object": {
       return spur(tuft(), children);
     }
