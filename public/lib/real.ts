@@ -38,7 +38,7 @@ export const el = (
           }
 
           return c;
-        }),
+        }).filter(Boolean),
       },
     );
   }
