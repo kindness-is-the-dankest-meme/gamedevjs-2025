@@ -45,6 +45,10 @@ menu {
   padding: 0;
 }
 
+rect {
+  stroke: white;
+}
+
 path {
   fill: white;
 }
