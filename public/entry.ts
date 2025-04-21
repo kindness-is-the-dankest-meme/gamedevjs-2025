@@ -221,8 +221,6 @@ globalThis.addEventListener("resize", ({ target, type }) => {
   worky.postMessage({ type, width, height });
 });
 
-globalThis.dispatchEvent(new Event("resize"));
-globalThis.addEventListener(
-  "click",
-  () => globalThis.dispatchEvent(new Event("resize")),
-);
+const regenerate = () => globalThis.dispatchEvent(new Event("resize"));
+globalThis.addEventListener("pointerup", regenerate);
+regenerate();
