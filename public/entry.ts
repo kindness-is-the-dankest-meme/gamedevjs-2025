@@ -12,6 +12,7 @@ const mapn = amap({
 });
 const nmap = amap({
   htmlFor: "for",
+  key: "data-key",
 });
 
 const peek = (as: NamedNodeMap): { [k: string]: unknown } =>
@@ -73,9 +74,12 @@ const scan = (el: Element | NodeListOf<ChildNode>): El =>
 const worky = new Worker("./worky.ts", { type: "module" });
 worky.addEventListener(
   "message",
-  ({ data }) => (m.firstChild ? m.replaceChildren : m.appendChild)(grow(data)),
+  ({ data }) => {
+    const nextNode = grow(data);
+    m.firstChild ? m.replaceChildren(nextNode) : m.appendChild(nextNode);
+  },
 );
-worky.postMessage(scan(m.childNodes));
+// worky.postMessage(scan(m.childNodes));
 
 const svgs: string[] = [
   // "a",
