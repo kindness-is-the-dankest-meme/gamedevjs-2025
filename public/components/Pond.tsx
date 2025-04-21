@@ -93,17 +93,17 @@ const ns = {
     d: "▐▟▝",
     l: "∙▌▘▖",
   },
-  "▄": {
-    u: "∙▀▘▝",
-    r: "▄▖▟",
-    d: "█▀▜▛",
-    l: "▄▗▙",
-  },
   "▀": {
     u: "█▄▘▝",
     r: "▀▜▘",
     d: "∙▄▗▖",
     l: "▀▛▝",
+  },
+  "▄": {
+    u: "∙▀▘▝",
+    r: "▄▖▟",
+    d: "█▀▜▛",
+    l: "▄▗▙",
   },
   "█": {
     u: "█▄▟▙",
@@ -141,6 +141,8 @@ const grid = (cols: number, rows: number, mapt = outl(cols, rows)) =>
     { length: rows },
     (_, i) => from({ length: cols }, (_, j) => mapt(i, j)),
   );
+
+const odds = (n: number) => random() < n;
 
 const s = (g: string[][]) =>
   g.map((r) => r.map((c) => c || " ").join("")).join("\n");
@@ -182,6 +184,122 @@ const genp = (cols: number, rows: number) =>
         (au === "" || au.includes(t)) && (ar === "" || ar.includes(t)) &&
         (ad === "" || ad.includes(t)) && (al === "" || al.includes(t))
       ).join("");
+
+      // prefer empty spaces as neighbors to straight lines
+      if (
+        (nu === "▀" || nr === "▐" || nd === "▄" || nl === "▌") &&
+        as.includes("∙")
+      ) {
+        if (odds(7 / 10)) {
+          acc[j] = "∙";
+          return acc;
+        }
+      }
+
+      // prefer filled spaces as neighbors to straight lines
+      if (
+        (nu === "▄" || nr === "▌" || nd === "▀" || nl === "▐") &&
+        as.includes("█")
+      ) {
+        if (odds(7 / 10)) {
+          acc[j] = "█";
+          return acc;
+        }
+      }
+
+      // prefer straight lines as neighbors to corners
+      if (
+        (nu === "▗" || nu === "▜" || nd === "▝" || nd === "▟") &&
+        as.includes("▐")
+      ) {
+        if (odds(9 / 10)) {
+          acc[j] = "▐";
+          return acc;
+        }
+      }
+
+      if (
+        (nu === "▖" || nu === "▛" || nd === "▘" || nd === "▙") &&
+        as.includes("▌")
+      ) {
+        if (odds(9 / 10)) {
+          acc[j] = "▌";
+          return acc;
+        }
+      }
+
+      // prefer straight lines as neighbors to corners
+      if (
+        (nr === "▖" || nr === "▟" || nl === "▗" || nl === "▙") &&
+        as.includes("▄")
+      ) {
+        if (odds(9 / 10)) {
+          acc[j] = "▄";
+          return acc;
+        }
+      }
+
+      if (
+        (nr === "▘" || nr === "▜" || nl === "▝" || nl === "▛") &&
+        as.includes("▀")
+      ) {
+        if (odds(9 / 10)) {
+          acc[j] = "▀";
+          return acc;
+        }
+      }
+
+      // // prefer empty spaces as neighbors to empty spaces
+      // if (
+      //   (nu === "∙" || nr === "∙" || nd === "∙" || nl === "∙") &&
+      //   as.includes("∙")
+      // ) {
+      //   if (odds(9 / 10)) {
+      //     acc[j] = "∙";
+      //     return acc;
+      //   }
+      // }
+
+      // prefer filled spaces as neighbors to filled spaces
+      if (
+        (nu === "█" || nr === "█" || nd === "█" || nl === "█") &&
+        as.includes("█")
+      ) {
+        if (odds(9 / 10)) {
+          acc[j] = "█";
+          return acc;
+        }
+      }
+
+      // // prefer continuing vertical lines
+      // if (nu === "▌" && as.includes("▌")) {
+      //   if (odds(5 / 10)) {
+      //     acc[j] = "▌";
+      //     return acc;
+      //   }
+      // }
+
+      // if (nu === "▐" && as.includes("▐")) {
+      //   if (odds(5 / 10)) {
+      //     acc[j] = "▐";
+      //     return acc;
+      //   }
+      // }
+
+      // // prefer continuing horizontal lines
+      // if (nl === "▄" && as.includes("▄")) {
+      //   if (odds(5 / 10)) {
+      //     acc[j] = "▄";
+      //     return acc;
+      //   }
+      // }
+
+      // if (nl === "▀" && as.includes("▀")) {
+      //   if (odds(5 / 10)) {
+      //     acc[j] = "▀";
+      //     return acc;
+      //   }
+      // }
 
       acc[j] = as.charAt(floor(random() * as.length));
       return acc;
