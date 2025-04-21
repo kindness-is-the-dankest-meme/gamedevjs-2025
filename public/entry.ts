@@ -222,3 +222,7 @@ globalThis.addEventListener("resize", ({ target, type }) => {
 });
 
 globalThis.dispatchEvent(new Event("resize"));
+globalThis.addEventListener(
+  "click",
+  () => globalThis.dispatchEvent(new Event("resize")),
+);
