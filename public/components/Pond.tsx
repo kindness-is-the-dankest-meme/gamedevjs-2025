@@ -4,7 +4,7 @@ type PondProps = {
   size: number;
 };
 
-const corners = (s: number) => {
+const tiles = (s: number) => {
   const hs = s / 2;
   return [
     ["╯i", `M 0 0 H ${hs} A ${hs} ${hs} 0 0 1 0 ${hs} Z`],
@@ -15,6 +15,11 @@ const corners = (s: number) => {
     ["╮o", `M 0 0 V ${hs} A ${hs} ${hs} 0 0 1 ${hs} ${s} H ${s} V 0 Z`],
     ["╯o", `M ${hs} 0 A ${hs} ${hs} 0 0 1 0 ${hs} V ${s} H ${s} V 0 Z`],
     ["╰o", `M 0 0 V ${s} H ${s} V ${hs} A ${hs} ${hs} 0 0 1 ${hs} 0 Z`],
+    ["│i", `M 0 0 H ${hs} V ${s} H 0 Z`],
+    ["│o", `M ${hs} 0 H ${s} V ${s} H ${hs} Z`],
+    ["─i", `M 0 0 V ${hs} H ${s} V 0 Z`],
+    ["─o", `M 0 ${hs} V ${s} H ${s} V ${hs} Z`],
+    ["■", `M 0 0 H ${s} V ${s} H 0 Z`],
   ];
 };
 
@@ -27,32 +32,13 @@ export const Pond = ({ cols, rows, size }: PondProps) => (
     fill="none"
   >
     <defs>
-      {corners(size).map(([id, d]) => (
+      {tiles(size).map(([id, d]) => (
         <g id={id} key={id}>
           <rect width={size} height={size} />
           <path d={d} />
         </g>
       ))}
-      <g id="│i">
-        <rect width={size} height={size} />
-        <rect width={size / 2} height={size} />
-      </g>
-      <g id="│o">
-        <rect width={size} height={size} />
-        <rect x={size / 2} width={size / 2} height={size} />
-      </g>
-      <g id="─i">
-        <rect width={size} height={size} />
-        <rect width={size} height={size / 2} />
-      </g>
-      <g id="─o">
-        <rect width={size} height={size} />
-        <rect y={size / 2} width={size} height={size / 2} />
-      </g>
-      <g id="∙i">
-        <rect width={size} height={size} />
-      </g>
-      <g id="∙o">
+      <g id="□">
         <rect width={size} height={size} />
       </g>
     </defs>
@@ -61,6 +47,36 @@ export const Pond = ({ cols, rows, size }: PondProps) => (
       <use href="#╮i" transform="translate(80,0)" />
       <use href="#╰i" transform="translate(0,80)" />
       <use href="#╯i" transform="translate(80,80)" />
+      <use href="#╯i" transform="translate(0,0)" />
+      <use href="#╰i" transform="translate(80,0)" />
+      <use href="#╭i" transform="translate(160,0)" />
+      <use href="#╮i" transform="translate(240,0)" />
+      <use href="#╭o" transform="translate(0,80)" />
+      <use href="#╮o" transform="translate(80,80)" />
+      <use href="#╯o" transform="translate(160,80)" />
+      <use href="#╰o" transform="translate(240,80)" />
+      <use href="#│i" transform="translate(0,160)" />
+      <use href="#│o" transform="translate(80,160)" />
+      <use href="#─i" transform="translate(160,160)" />
+      <use href="#─o" transform="translate(240,160)" />
+      <use href="#■" transform="translate(0,240)" />
+      <use href="#□" transform="translate(80,240)" />
+    </g>
+    <g transform="translate(320,0)">
+      <use href="#╭i" transform="translate(0,0)" />
+      <use href="#╮i" transform="translate(80,0)" />
+      <use href="#╭o" transform="translate(160,0)" />
+      <use href="#╮o" transform="translate(240,0)" />
+      <use href="#╰i" transform="translate(0,80)" />
+      <use href="#╯i" transform="translate(80,80)" />
+      <use href="#╰o" transform="translate(160,80)" />
+      <use href="#╯o" transform="translate(240,80)" />
+      <use href="#─o" transform="translate(0,160)" />
+      <use href="#─i" transform="translate(80,160)" />
+      <use href="#│o" transform="translate(160,160)" />
+      <use href="#│i" transform="translate(240,160)" />
+      <use href="#□" transform="translate(0,240)" />
+      <use href="#■" transform="translate(80,240)" />
     </g>
   </svg>
 );
