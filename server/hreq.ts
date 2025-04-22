@@ -16,6 +16,8 @@ import {
 type F<T> = T extends new (...args: infer A) => infer R ? (...args: A) => R
   : never;
 
+const prod = Deno.env.has("DENO_DEPLOYMENT_ID");
+
 const fres: F<typeof Response> = (body, init) => new Response(body, init);
 const stat = (code: StatusCode) =>
   fres(`${code} ${STATUS_TEXT[code]}`, {
@@ -75,6 +77,7 @@ const rexp = (code: string) => code.replace(/\nexport { };/g, "");
 
 await initSwc();
 const swco: Options = {
+  envName: prod ? "production" : "development",
   jsc: {
     parser: {
       syntax: "typescript",
@@ -84,8 +87,9 @@ const swco: Options = {
     target: "es2024",
     loose: false,
     minify: {
-      compress: false,
-      mangle: false,
+      compress: prod,
+      mangle: prod,
+      module: true,
     },
     transform: {
       react: {
@@ -97,7 +101,7 @@ const swco: Options = {
   module: {
     type: "es6",
   },
-  minify: false,
+  minify: prod,
   isModule: true,
 };
 const rile = (path: URL) =>
