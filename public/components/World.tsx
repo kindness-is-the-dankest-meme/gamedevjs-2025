@@ -44,12 +44,16 @@ const tiles = (s: number) => {
 
 /**
  * ∙ ∙ ∙ ∙ ∙ ∙ ∙ ∙ ∙ ∙ ∙ ∙
- * ∙ ∙ ▗ ▄ ▄ ▄ ▖ ∙ ∙ ∙ ∙ ∙
- * ∙ ▗ ▟ █ █ █ ▌ ▗ ▖ ∙ ∙ ∙
- * ∙ ▐ █ ▛ ▀ ▜ ▙ ▞ ▚ ▄ ▖ ∙
- * ∙ ▐ █ ▙ ▄ ▟ █ ▌ ▝ ▀ ▘ ∙
- * ∙ ▝ ▜ █ █ █ ▛ ▘ ∙ ∙ ∙ ∙
- * ∙ ∙ ▝ ▀ ▀ ▀ ▘ ∙ ∙ ∙ ∙ ∙
+ * ∙ ▗ ▄ ▄ ▄ ▄ ▖ ▗ ▖ ∙ ∙ ∙
+ * ∙ ▐ █ █ █ █ ▌ ▐ ▌ ∙ ∙ ∙
+ * ∙ ▐ █ █ █ █ ▙ ╱ ╲ ▄ ▖ ∙
+ * ∙ ▐ █ █ █ █ █ ▙ ▟ █ ▌ ∙
+ * ∙ ▝ ▀ ▜ █ ▛ ▀ ▀ ▀ ▜ ▌ ∙
+ * ∙ ▗ ▄ ▞ ▀ ▚ ▄ ▖ ∙ ▐ ▌ ∙
+ * ∙ ▐ █ ▌ ▗ ▟ █ ▌ ▗ ▟ ▌ ∙
+ * ∙ ▝ ▀ ▚ ▟ █ █ ▌ ▐ █ ▌ ∙
+ * ∙ ▗ ▄ ▟ █ █ ▛ ╲ ╱ ▀ ▘ ∙
+ * ∙ ▝ ▀ ▀ ▀ ▀ ▘ ▝ ▘ ∙ ∙ ∙
  * ∙ ∙ ∙ ∙ ∙ ∙ ∙ ∙ ∙ ∙ ∙ ∙
  */
 const ts = {
@@ -194,10 +198,10 @@ const cülz = (
   }
 
   const [an, ae, as, aw] = [
-    ts[ns].n || "",
-    ts[nw].e || "",
-    ts[nn].s || "",
-    ts[ne].w || "",
+    ts[ns].n,
+    ts[nw].e,
+    ts[nn].s,
+    ts[ne].w,
   ];
 
   const aa = (an + ae + as + aw).split("").filter((
@@ -206,6 +210,8 @@ const cülz = (
     (an === "" || an.includes(t)) && (ae === "" || ae.includes(t)) &&
     (as === "" || as.includes(t)) && (aw === "" || aw.includes(t))
   ).join("");
+
+  console.log(aa);
 
   // // prefer empty spaces as neighbors to straight lines
   // if (
@@ -362,7 +368,8 @@ const odds = (n: number) => random() < n;
 
 const tapl = (
   g: string[][],
-) => (console.log(g.map((r) => r.map((c) => c || " ").join("")).join("\n")), g);
+) => (console.log(g.map((r) => r.map((c) => c || " ").join(" ")).join("\n")),
+  g);
 
 const genp = (cols: number, rows: number) =>
   grid(cols, rows).reduce<string[][]>(rülz, []);
