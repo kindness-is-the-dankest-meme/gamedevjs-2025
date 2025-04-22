@@ -1,4 +1,3 @@
-import { Hud } from "./Hud.tsx";
 import { Pond } from "./Pond.tsx";
 
 type AppProps = {
