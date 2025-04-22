@@ -48,7 +48,8 @@ menu {
 }
 
 rect {
-  stroke: white;
+  stroke: lightblue;
+  stroke-width: 0.1px;
 }
 
 path {

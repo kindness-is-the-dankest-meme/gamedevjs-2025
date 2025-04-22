@@ -145,6 +145,196 @@ const ns = {
   },
 } as const;
 
+const cülz = (
+  acr: readonly string[][],
+  r: readonly string[],
+  i: number,
+  rs: readonly string[][],
+) =>
+(acc: string[], c: string, j: number) => {
+  // i === 0 || i === rows - 1 || j === 0 || j === cols - 1
+  if (c !== "") {
+    acc[j] = c;
+    return acc;
+  }
+
+  const [nu, nr, nd, nl] = [
+    acr[i - 1][j],
+    r[j + 1],
+    rs[i + 1][j],
+    acc[j - 1],
+  ];
+
+  if (!(isvt(nu) && isvt(nr) && isvt(nd) && isvt(nl))) {
+    throw new Error("Invalid neighbor");
+  }
+
+  const [au, ar, ad, al] = [
+    ns[nd].u || "",
+    ns[nl].r || "",
+    ns[nu].d || "",
+    ns[nr].l || "",
+  ];
+
+  const as = (au + ar + ad + al).split("").filter((
+    t,
+  ) =>
+    (au === "" || au.includes(t)) && (ar === "" || ar.includes(t)) &&
+    (ad === "" || ad.includes(t)) && (al === "" || al.includes(t))
+  ).join("");
+
+  // // prefer empty spaces as neighbors to straight lines
+  // if (
+  //   (nu === "▀" || nr === "▐" || nd === "▄" || nl === "▌") &&
+  //   as.includes("∙")
+  // ) {
+  //   if (odds(7 / 10)) {
+  //     acc[j] = "∙";
+  //     return acc;
+  //   }
+  // }
+
+  // // prefer filled spaces as neighbors to straight lines
+  // if (
+  //   (nu === "▄" || nr === "▌" || nd === "▀" || nl === "▐") &&
+  //   as.includes("█")
+  // ) {
+  //   if (odds(7 / 10)) {
+  //     acc[j] = "█";
+  //     return acc;
+  //   }
+  // }
+
+  // prefer filled spaces as neighbors to filled spaces
+  if (
+    (nu === "█" || nr === "█" || nd === "█" || nl === "█" ||
+      nu === "▟" || nr === "▟" || nd === "▜" || nl === "▜" ||
+      nu === "▙" || nr === "▙" || nd === "▛" || nl === "▛" ||
+      nu === "▄" || nr === "▌" || nd === "▀" || nl === "▐") &&
+    as.includes("█")
+  ) {
+    if (odds(9 / 10)) {
+      acc[j] = "█";
+      return acc;
+    }
+  }
+
+  // prefer straight lines as neighbors to corners
+  if (
+    (nu === "▗" || nu === "▜" || nu === "▚" ||
+      nd === "▝" || nd === "▟" || nd === "▞") &&
+    as.includes("▐")
+  ) {
+    if (odds(9 / 10)) {
+      acc[j] = "▐";
+      return acc;
+    }
+  }
+
+  if (
+    (nu === "▖" || nu === "▛" || nu === "▞" ||
+      nd === "▘" || nd === "▙" || nd === "▚") &&
+    as.includes("▌")
+  ) {
+    if (odds(9 / 10)) {
+      acc[j] = "▌";
+      return acc;
+    }
+  }
+
+  // prefer straight lines as neighbors to corners
+  if (
+    (nr === "▖" || nr === "▟" || nr === "▞" ||
+      nl === "▗" || nl === "▙" || nl === "▚") &&
+    as.includes("▄")
+  ) {
+    if (odds(9 / 10)) {
+      acc[j] = "▄";
+      return acc;
+    }
+  }
+
+  if (
+    (nr === "▘" || nr === "▜" || nr === "▚" ||
+      nl === "▝" || nl === "▛" || nl === "▞") &&
+    as.includes("▀")
+  ) {
+    if (odds(9 / 10)) {
+      acc[j] = "▀";
+      return acc;
+    }
+  }
+
+  // // prefer empty spaces as neighbors to empty spaces
+  // if (
+  //   (nu === "∙" || nr === "∙" || nd === "∙" || nl === "∙") &&
+  //   as.includes("∙")
+  // ) {
+  //   if (odds(9 / 10)) {
+  //     acc[j] = "∙";
+  //     return acc;
+  //   }
+  // }
+
+  // // prefer continuing vertical lines
+  // if (nu === "▌" && as.includes("▌")) {
+  //   if (odds(5 / 10)) {
+  //     acc[j] = "▌";
+  //     return acc;
+  //   }
+  // }
+
+  // if (nu === "▐" && as.includes("▐")) {
+  //   if (odds(5 / 10)) {
+  //     acc[j] = "▐";
+  //     return acc;
+  //   }
+  // }
+
+  // // prefer continuing horizontal lines
+  // if (nl === "▄" && as.includes("▄")) {
+  //   if (odds(5 / 10)) {
+  //     acc[j] = "▄";
+  //     return acc;
+  //   }
+  // }
+
+  // if (nl === "▀" && as.includes("▀")) {
+  //   if (odds(5 / 10)) {
+  //     acc[j] = "▀";
+  //     return acc;
+  //   }
+  // }
+
+  acc[j] = as.charAt(floor(random() * as.length));
+  return acc;
+};
+
+const rülz = (
+  acr: string[][],
+  r: string[],
+  i: number,
+  rs: string[][],
+) => (acr.push(r.reduce<string[]>(cülz(acr, r, i, rs), [])), acr);
+
+const _line = (
+  acr: string[][],
+  r: string[],
+  i: number,
+  { length: j }: string[][],
+) => (acr.push(r.reduce<string[]>((acc, c, k, { length: l }) => {
+  acc[k] = (k === 0 || k === l - 1)
+    ? c
+    : (i === floor(j / 2) - 1)
+    ? (k === 1 ? "▗" : k === l - 2 ? "▖" : "▄")
+    : (i === floor(j / 2))
+    ? (k === 1 ? "▝" : k === l - 2 ? "▘" : "▀")
+    : c;
+
+  return acc;
+}, [])),
+  acr);
+
 const { from } = Array;
 const { floor, random } = Math;
 const { keys } = Object;
@@ -164,175 +354,11 @@ const grid = (cols: number, rows: number, mapt = outl(cols, rows)) =>
 
 const odds = (n: number) => random() < n;
 
-const s = (g: string[][]) =>
+const _s = (g: string[][]) =>
   g.map((r) => r.map((c) => c || " ").join("")).join("\n");
 
 const genp = (cols: number, rows: number) =>
-  grid(cols, rows).reduce<string[][]>((
-    acr,
-    r,
-    i,
-    rs,
-  ) => (acr.push(
-    r.reduce<string[]>((acc, c, j) => {
-      if (i === 0 || i === rows - 1 || j === 0 || j === cols - 1) {
-        acc[j] = c;
-        return acc;
-      }
-
-      const [nu, nr, nd, nl] = [
-        acr[i - 1][j],
-        r[j + 1],
-        rs[i + 1][j],
-        acc[j - 1],
-      ];
-
-      if (!(isvt(nu) && isvt(nr) && isvt(nd) && isvt(nl))) {
-        throw new Error("Invalid neighbor");
-      }
-
-      const [au, ar, ad, al] = [
-        ns[nd].u || "",
-        ns[nl].r || "",
-        ns[nu].d || "",
-        ns[nr].l || "",
-      ];
-
-      const as = (au + ar + ad + al).split("").filter((
-        t,
-      ) =>
-        (au === "" || au.includes(t)) && (ar === "" || ar.includes(t)) &&
-        (ad === "" || ad.includes(t)) && (al === "" || al.includes(t))
-      ).join("");
-
-      // // prefer empty spaces as neighbors to straight lines
-      // if (
-      //   (nu === "▀" || nr === "▐" || nd === "▄" || nl === "▌") &&
-      //   as.includes("∙")
-      // ) {
-      //   if (odds(7 / 10)) {
-      //     acc[j] = "∙";
-      //     return acc;
-      //   }
-      // }
-
-      // // prefer filled spaces as neighbors to straight lines
-      // if (
-      //   (nu === "▄" || nr === "▌" || nd === "▀" || nl === "▐") &&
-      //   as.includes("█")
-      // ) {
-      //   if (odds(7 / 10)) {
-      //     acc[j] = "█";
-      //     return acc;
-      //   }
-      // }
-
-      // prefer filled spaces as neighbors to filled spaces
-      if (
-        (nu === "█" || nr === "█" || nd === "█" || nl === "█" ||
-          nu === "▟" || nr === "▟" || nd === "▜" || nl === "▜" ||
-          nu === "▙" || nr === "▙" || nd === "▛" || nl === "▛" ||
-          nu === "▄" || nr === "▌" || nd === "▀" || nl === "▐") &&
-        as.includes("█")
-      ) {
-        if (odds(9 / 10)) {
-          acc[j] = "█";
-          return acc;
-        }
-      }
-
-      // prefer straight lines as neighbors to corners
-      if (
-        (nu === "▗" || nu === "▜" || nu === "▚" ||
-          nd === "▝" || nd === "▟" || nd === "▞") &&
-        as.includes("▐")
-      ) {
-        if (odds(9 / 10)) {
-          acc[j] = "▐";
-          return acc;
-        }
-      }
-
-      if (
-        (nu === "▖" || nu === "▛" || nu === "▞" ||
-          nd === "▘" || nd === "▙" || nd === "▚") &&
-        as.includes("▌")
-      ) {
-        if (odds(9 / 10)) {
-          acc[j] = "▌";
-          return acc;
-        }
-      }
-
-      // prefer straight lines as neighbors to corners
-      if (
-        (nr === "▖" || nr === "▟" || nr === "▞" ||
-          nl === "▗" || nl === "▙" || nl === "▚") &&
-        as.includes("▄")
-      ) {
-        if (odds(9 / 10)) {
-          acc[j] = "▄";
-          return acc;
-        }
-      }
-
-      if (
-        (nr === "▘" || nr === "▜" || nr === "▚" ||
-          nl === "▝" || nl === "▛" || nl === "▞") &&
-        as.includes("▀")
-      ) {
-        if (odds(9 / 10)) {
-          acc[j] = "▀";
-          return acc;
-        }
-      }
-
-      // // prefer empty spaces as neighbors to empty spaces
-      // if (
-      //   (nu === "∙" || nr === "∙" || nd === "∙" || nl === "∙") &&
-      //   as.includes("∙")
-      // ) {
-      //   if (odds(9 / 10)) {
-      //     acc[j] = "∙";
-      //     return acc;
-      //   }
-      // }
-
-      // // prefer continuing vertical lines
-      // if (nu === "▌" && as.includes("▌")) {
-      //   if (odds(5 / 10)) {
-      //     acc[j] = "▌";
-      //     return acc;
-      //   }
-      // }
-
-      // if (nu === "▐" && as.includes("▐")) {
-      //   if (odds(5 / 10)) {
-      //     acc[j] = "▐";
-      //     return acc;
-      //   }
-      // }
-
-      // // prefer continuing horizontal lines
-      // if (nl === "▄" && as.includes("▄")) {
-      //   if (odds(5 / 10)) {
-      //     acc[j] = "▄";
-      //     return acc;
-      //   }
-      // }
-
-      // if (nl === "▀" && as.includes("▀")) {
-      //   if (odds(5 / 10)) {
-      //     acc[j] = "▀";
-      //     return acc;
-      //   }
-      // }
-
-      acc[j] = as.charAt(floor(random() * as.length));
-      return acc;
-    }, []),
-  ),
-    acr), []);
+  grid(cols, rows).reduce<string[][]>(rülz, []);
 
 export const Pond = ({ cols, rows, size }: PondProps) => (
   <svg
@@ -345,8 +371,8 @@ export const Pond = ({ cols, rows, size }: PondProps) => (
     <defs>
       {tiles(size).map(([id, d]) => (
         <g id={id} key={id}>
-          <rect width={size} height={size} />
           {d && <path d={d} />}
+          <rect width={size} height={size} />
         </g>
       ))}
     </defs>
