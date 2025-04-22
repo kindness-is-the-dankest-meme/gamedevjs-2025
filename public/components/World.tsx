@@ -207,7 +207,6 @@ const cülz = (
     (as === "" || as.includes(t)) && (aw === "" || aw.includes(t))
   ).join("");
 
-  /*
   // // prefer empty spaces as neighbors to straight lines
   // if (
   //   (nn === "▀" || ne === "▐" || ns === "▄" || nw === "▌") &&
@@ -330,7 +329,6 @@ const cülz = (
   //     return acc;
   //   }
   // }
-  */
 
   acc[j] = aa.charAt(floor(random() * aa.length));
   return acc;
