@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "deno run -NR --watch main.ts"
+    "dev": "deno run -ENR --watch main.ts"
   },
   "imports": {
     "real/jsx-runtime": "./public/lib/real.ts"
