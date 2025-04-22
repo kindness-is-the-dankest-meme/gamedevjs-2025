@@ -47,9 +47,15 @@ menu {
   padding: 0;
 }
 
-rect {
+use {
+  fill: rgba(0, 0, 0, 0.1);
+
   stroke: lightblue;
   stroke-width: 0.1px;
+
+  &:hover {
+    fill: rgba(0, 0, 0, 0.135);
+  }
 }
 
 path {

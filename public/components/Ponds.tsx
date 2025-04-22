@@ -9,7 +9,7 @@ export const Ponds = ({ ts, s }: PondsProps) => (
       r.map((c, j) => (
         <use
           key={`${i}:${j}`}
-          href={`#${c}`}
+          href={`#${c || "∙"}`}
           transform={`translate(${j * s} ${i * s})`}
         />
       ))
