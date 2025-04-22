@@ -1,4 +1,4 @@
-import { Pond } from "./Pond.tsx";
+import { World } from "./World.tsx";
 
 type AppProps = {
   width: number;
@@ -10,7 +10,7 @@ const size = 40;
 
 export const App = ({ width, height }: AppProps) => (
   <>
-    <Pond cols={floor(width / size)} rows={floor(height / size)} size={size} />
+    <World cols={floor(width / size)} rows={floor(height / size)} size={size} />
     {/* <Hud /> */}
   </>
 );

@@ -1,4 +1,6 @@
-type PondProps = {
+import { Ponds } from "./Ponds.tsx";
+
+type WorldProps = {
   cols: number;
   rows: number;
   size: number;
@@ -40,108 +42,108 @@ const tiles = (s: number) => {
  * ╰ ╮ ∙ ∙ ╭ ╯
  * ∙ ╰ ─ ─ ╯ ∙
  */
-const ns = {
+const ts = {
   "▗": {
-    u: "∙▀▘▝",
-    r: "▞▄▖▟",
-    d: "▞▐▟▝",
-    l: "∙▌▘▖",
+    n: "∙▀▘▝",
+    e: "▞▄▖▟",
+    s: "▞▐▟▝",
+    w: "∙▌▘▖",
   },
   "▖": {
-    u: "∙▀▘▝",
-    r: "∙▐▗▝",
-    d: "▚▌▘▙",
-    l: "▚▄▗▙",
+    n: "∙▀▘▝",
+    e: "∙▐▗▝",
+    s: "▚▌▘▙",
+    w: "▚▄▗▙",
   },
   "▘": {
-    u: "▞▌▖▛",
-    r: "∙▐▗▝",
-    d: "∙▄▗▖",
-    l: "▞▛▝▀",
+    n: "▞▌▖▛",
+    e: "∙▐▗▝",
+    s: "∙▄▗▖",
+    w: "▞▛▝▀",
   },
   "▝": {
-    u: "▚▐▜▗",
-    r: "▚▀▜▘",
-    d: "∙▄▗▖",
-    l: "∙▌▘▖",
+    n: "▚▐▜▗",
+    e: "▚▀▜▘",
+    s: "∙▄▗▖",
+    w: "∙▌▘▖",
   },
   "▛": {
-    u: "█▄▟▙",
-    r: "▚▀▜▘",
-    d: "▌▘▙",
-    l: "█▐▟▜",
+    n: "█▄▟▙",
+    e: "▚▀▜▘",
+    s: "▌▘▙",
+    w: "█▐▟▜",
   },
   "▜": {
-    u: "█▄▟▙",
-    r: "█▌▛▝",
-    d: "▞▐▟▝",
-    l: "▞▛▝▀",
+    n: "█▄▟▙",
+    e: "█▌▛▝",
+    s: "▞▐▟▝",
+    w: "▞▛▝▀",
   },
   "▟": {
-    u: "▚▐▜▗",
-    r: "█▌▛▙",
-    d: "█▀▜▗",
-    l: "▚▗▙▄",
+    n: "▚▐▜▗",
+    e: "█▌▛▙",
+    s: "█▀▜▗",
+    w: "▚▗▙▄",
   },
   "▙": {
-    u: "▞▌▖▛",
-    r: "▞▄▖▟",
-    d: "█▀▖▛",
-    l: "█▐▟▖",
+    n: "▞▌▖▛",
+    e: "▞▄▖▟",
+    s: "█▀▖▛",
+    w: "█▐▟▖",
   },
   "▌": {
-    u: "▞▌▖▛",
-    r: "∙▐▗▝",
-    d: "▌▘▙",
-    l: "█▐▟▜",
+    n: "▞▌▖▛",
+    e: "∙▐▗▝",
+    s: "▌▘▙",
+    w: "█▐▟▜",
   },
   "▐": {
-    u: "▚▐▜▗",
-    r: "█▌▛▙",
-    d: "▞▐▟▝",
-    l: "∙▌▘▖",
+    n: "▚▐▜▗",
+    e: "█▌▛▙",
+    s: "▞▐▟▝",
+    w: "∙▌▘▖",
   },
   "▚": {
-    u: "▌▖▛",
-    r: "▞▄▖▟",
-    d: "▞▐▟▝",
-    l: "█▐▟▜",
+    n: "▌▖▛",
+    e: "▞▄▖▟",
+    s: "▞▐▟▝",
+    w: "█▐▟▜",
   },
   "▞": {
-    u: "▐▜▗",
-    r: "▚▀▜▘",
-    d: "▌▘▙",
-    l: "∙▌▘▖",
+    n: "▐▜▗",
+    e: "▚▀▜▘",
+    s: "▌▘▙",
+    w: "∙▌▘▖",
   },
   "▀": {
-    u: "█▄▘▝",
-    r: "▚▀▜▘",
-    d: "∙▄▗▖",
-    l: "▞▀▛▝",
+    n: "█▄▘▝",
+    e: "▚▀▜▘",
+    s: "∙▄▗▖",
+    w: "▞▀▛▝",
   },
   "▄": {
-    u: "∙▀▘▝",
-    r: "▞▄▖▟",
-    d: "█▀▜▛",
-    l: "▚▄▗▙",
+    n: "∙▀▘▝",
+    e: "▞▄▖▟",
+    s: "█▀▜▛",
+    w: "▚▄▗▙",
   },
   "█": {
-    u: "█▄▟▙",
-    r: "█▌▛▙",
-    d: "█▀▜▛",
-    l: "█▐▟▜",
+    n: "█▄▟▙",
+    e: "█▌▛▙",
+    s: "█▀▜▛",
+    w: "█▐▟▜",
   },
   "∙": {
-    u: "∙▀▘▝",
-    r: "∙▐▗▝",
-    d: "∙▄▖▗",
-    l: "∙▌▘▖",
+    n: "∙▀▘▝",
+    e: "∙▐▗▝",
+    s: "∙▄▖▗",
+    w: "∙▌▘▖",
   },
   "": {
-    u: "",
-    r: "",
-    d: "",
-    l: "",
+    n: "",
+    e: "",
+    s: "",
+    w: "",
   },
 } as const;
 
@@ -158,35 +160,35 @@ const cülz = (
     return acc;
   }
 
-  const [nu, nr, nd, nl] = [
+  const [nn, ne, ns, nw] = [
     acr[i - 1][j],
     r[j + 1],
     rs[i + 1][j],
     acc[j - 1],
   ];
 
-  if (!(isvt(nu) && isvt(nr) && isvt(nd) && isvt(nl))) {
+  if (!(isvt(nn) && isvt(ne) && isvt(ns) && isvt(nw))) {
     throw new Error("Invalid neighbor");
   }
 
-  const [au, ar, ad, al] = [
-    ns[nd].u || "",
-    ns[nl].r || "",
-    ns[nu].d || "",
-    ns[nr].l || "",
+  const [an, ae, as, aw] = [
+    ts[ns].n || "",
+    ts[nw].e || "",
+    ts[nn].s || "",
+    ts[ne].w || "",
   ];
 
-  const as = (au + ar + ad + al).split("").filter((
+  const aa = (an + ae + as + aw).split("").filter((
     t,
   ) =>
-    (au === "" || au.includes(t)) && (ar === "" || ar.includes(t)) &&
-    (ad === "" || ad.includes(t)) && (al === "" || al.includes(t))
+    (an === "" || an.includes(t)) && (ae === "" || ae.includes(t)) &&
+    (as === "" || as.includes(t)) && (aw === "" || aw.includes(t))
   ).join("");
 
   // // prefer empty spaces as neighbors to straight lines
   // if (
-  //   (nu === "▀" || nr === "▐" || nd === "▄" || nl === "▌") &&
-  //   as.includes("∙")
+  //   (nn === "▀" || ne === "▐" || ns === "▄" || nw === "▌") &&
+  //   aa.includes("∙")
   // ) {
   //   if (odds(7 / 10)) {
   //     acc[j] = "∙";
@@ -196,8 +198,8 @@ const cülz = (
 
   // // prefer filled spaces as neighbors to straight lines
   // if (
-  //   (nu === "▄" || nr === "▌" || nd === "▀" || nl === "▐") &&
-  //   as.includes("█")
+  //   (nn === "▄" || ne === "▌" || ns === "▀" || nw === "▐") &&
+  //   aa.includes("█")
   // ) {
   //   if (odds(7 / 10)) {
   //     acc[j] = "█";
@@ -207,11 +209,11 @@ const cülz = (
 
   // prefer filled spaces as neighbors to filled spaces
   if (
-    (nu === "█" || nr === "█" || nd === "█" || nl === "█" ||
-      nu === "▟" || nr === "▟" || nd === "▜" || nl === "▜" ||
-      nu === "▙" || nr === "▙" || nd === "▛" || nl === "▛" ||
-      nu === "▄" || nr === "▌" || nd === "▀" || nl === "▐") &&
-    as.includes("█")
+    (nn === "█" || ne === "█" || ns === "█" || nw === "█" ||
+      nn === "▟" || ne === "▟" || ns === "▜" || nw === "▜" ||
+      nn === "▙" || ne === "▙" || ns === "▛" || nw === "▛" ||
+      nn === "▄" || ne === "▌" || ns === "▀" || nw === "▐") &&
+    aa.includes("█")
   ) {
     if (odds(9 / 10)) {
       acc[j] = "█";
@@ -221,9 +223,9 @@ const cülz = (
 
   // prefer straight lines as neighbors to corners
   if (
-    (nu === "▗" || nu === "▜" || nu === "▚" ||
-      nd === "▝" || nd === "▟" || nd === "▞") &&
-    as.includes("▐")
+    (nn === "▗" || nn === "▜" || nn === "▚" ||
+      ns === "▝" || ns === "▟" || ns === "▞") &&
+    aa.includes("▐")
   ) {
     if (odds(9 / 10)) {
       acc[j] = "▐";
@@ -232,9 +234,9 @@ const cülz = (
   }
 
   if (
-    (nu === "▖" || nu === "▛" || nu === "▞" ||
-      nd === "▘" || nd === "▙" || nd === "▚") &&
-    as.includes("▌")
+    (nn === "▖" || nn === "▛" || nn === "▞" ||
+      ns === "▘" || ns === "▙" || ns === "▚") &&
+    aa.includes("▌")
   ) {
     if (odds(9 / 10)) {
       acc[j] = "▌";
@@ -244,9 +246,9 @@ const cülz = (
 
   // prefer straight lines as neighbors to corners
   if (
-    (nr === "▖" || nr === "▟" || nr === "▞" ||
-      nl === "▗" || nl === "▙" || nl === "▚") &&
-    as.includes("▄")
+    (ne === "▖" || ne === "▟" || ne === "▞" ||
+      nw === "▗" || nw === "▙" || nw === "▚") &&
+    aa.includes("▄")
   ) {
     if (odds(9 / 10)) {
       acc[j] = "▄";
@@ -255,9 +257,9 @@ const cülz = (
   }
 
   if (
-    (nr === "▘" || nr === "▜" || nr === "▚" ||
-      nl === "▝" || nl === "▛" || nl === "▞") &&
-    as.includes("▀")
+    (ne === "▘" || ne === "▜" || ne === "▚" ||
+      nw === "▝" || nw === "▛" || nw === "▞") &&
+    aa.includes("▀")
   ) {
     if (odds(9 / 10)) {
       acc[j] = "▀";
@@ -267,8 +269,8 @@ const cülz = (
 
   // // prefer empty spaces as neighbors to empty spaces
   // if (
-  //   (nu === "∙" || nr === "∙" || nd === "∙" || nl === "∙") &&
-  //   as.includes("∙")
+  //   (nn === "∙" || ne === "∙" || ns === "∙" || nw === "∙") &&
+  //   aa.includes("∙")
   // ) {
   //   if (odds(9 / 10)) {
   //     acc[j] = "∙";
@@ -277,14 +279,14 @@ const cülz = (
   // }
 
   // // prefer continuing vertical lines
-  // if (nu === "▌" && as.includes("▌")) {
+  // if (nn === "▌" && aa.includes("▌")) {
   //   if (odds(5 / 10)) {
   //     acc[j] = "▌";
   //     return acc;
   //   }
   // }
 
-  // if (nu === "▐" && as.includes("▐")) {
+  // if (nn === "▐" && aa.includes("▐")) {
   //   if (odds(5 / 10)) {
   //     acc[j] = "▐";
   //     return acc;
@@ -292,21 +294,21 @@ const cülz = (
   // }
 
   // // prefer continuing horizontal lines
-  // if (nl === "▄" && as.includes("▄")) {
+  // if (nw === "▄" && aa.includes("▄")) {
   //   if (odds(5 / 10)) {
   //     acc[j] = "▄";
   //     return acc;
   //   }
   // }
 
-  // if (nl === "▀" && as.includes("▀")) {
+  // if (nw === "▀" && aa.includes("▀")) {
   //   if (odds(5 / 10)) {
   //     acc[j] = "▀";
   //     return acc;
   //   }
   // }
 
-  acc[j] = as.charAt(floor(random() * as.length));
+  acc[j] = aa.charAt(floor(random() * aa.length));
   return acc;
 };
 
@@ -317,30 +319,12 @@ const rülz = (
   rs: string[][],
 ) => (acr.push(r.reduce<string[]>(cülz(acr, r, i, rs), [])), acr);
 
-const _line = (
-  acr: string[][],
-  r: string[],
-  i: number,
-  { length: j }: string[][],
-) => (acr.push(r.reduce<string[]>((acc, c, k, { length: l }) => {
-  acc[k] = (k === 0 || k === l - 1)
-    ? c
-    : (i === floor(j / 2) - 1)
-    ? (k === 1 ? "▗" : k === l - 2 ? "▖" : "▄")
-    : (i === floor(j / 2))
-    ? (k === 1 ? "▝" : k === l - 2 ? "▘" : "▀")
-    : c;
-
-  return acc;
-}, [])),
-  acr);
-
 const { from } = Array;
 const { floor, random } = Math;
 const { keys } = Object;
 
-const vlts = keys(ns);
-type Tile = keyof typeof ns;
+const vlts = keys(ts);
+type Tile = keyof typeof ts;
 const isvt = (t: string): t is Tile => vlts.includes(t);
 
 const outl = (cols: number, rows: number) => (i: number, j: number) =>
@@ -354,13 +338,14 @@ const grid = (cols: number, rows: number, mapt = outl(cols, rows)) =>
 
 const odds = (n: number) => random() < n;
 
-const _s = (g: string[][]) =>
-  g.map((r) => r.map((c) => c || " ").join("")).join("\n");
+const tapl = (
+  g: string[][],
+) => (console.log(g.map((r) => r.map((c) => c || " ").join("")).join("\n")), g);
 
 const genp = (cols: number, rows: number) =>
   grid(cols, rows).reduce<string[][]>(rülz, []);
 
-export const Pond = ({ cols, rows, size }: PondProps) => (
+export const World = ({ cols, rows, size }: WorldProps) => (
   <svg
     width="100%"
     height="100%"
@@ -376,16 +361,6 @@ export const Pond = ({ cols, rows, size }: PondProps) => (
         </g>
       ))}
     </defs>
-    <g>
-      {genp(cols, rows).map((r, i) =>
-        r.map((c, j) => (
-          <use
-            key={`${i}:${j}`}
-            href={`#${c}`}
-            transform={`translate(${j * size} ${i * size})`}
-          />
-        ))
-      )}
-    </g>
+    <Ponds ts={tapl(genp(cols, rows))} s={size} />
   </svg>
 );
