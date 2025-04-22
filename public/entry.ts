@@ -206,7 +206,7 @@ const grow = (el: El | string): Node => {
   }
 };
 
-const Size = z
+const InnerSize = z
   .object({
     innerWidth: z.number(),
     innerHeight: z.number(),
@@ -217,10 +217,10 @@ const Size = z
   }));
 
 globalThis.addEventListener("resize", ({ target, type }) => {
-  const { width, height } = Size.parse(target);
+  const { width, height } = InnerSize.parse(target);
   worky.postMessage({ type, width, height });
 });
 
-const regenerate = () => globalThis.dispatchEvent(new Event("resize"));
-m.addEventListener("pointerup", regenerate);
-regenerate();
+const dispatchResize = () => globalThis.dispatchEvent(new Event("resize"));
+m.addEventListener("click", dispatchResize);
+dispatchResize();
