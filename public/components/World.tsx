@@ -211,8 +211,6 @@ const cülz = (
     (as === "" || as.includes(t)) && (aw === "" || aw.includes(t))
   ).join("");
 
-  console.log(aa);
-
   // // prefer empty spaces as neighbors to straight lines
   // if (
   //   (nn === "▀" || ne === "▐" || ns === "▄" || nw === "▌") &&
@@ -366,20 +364,18 @@ const grid = (cols: number, rows: number, mapt = outl(cols, rows)) =>
 
 const odds = (n: number) => random() < n;
 
-const tapl = (
-  g: string[][],
-) => (console.log(g.map((r) => r.map((c) => c || " ").join(" ")).join("\n")),
-  g);
+const cstr = (c: string) => c || " ";
+const rstr = (r: string[]) => r.map(cstr).join(" ");
+const gstr = (g: string[][]) => g.map(rstr).join("\n");
+const tapl = (g: string[][]) => (console.log(gstr(g)), g);
 
 const genp = (cols: number, rows: number) =>
   grid(cols, rows).reduce<string[][]>(rülz, []);
 
 export const World = ({ cols, rows, size }: WorldProps) => (
   <svg
-    width="100%"
-    height="100%"
-    preserveAspectRatio="xMidYMid meet"
-    viewBox={`0 0 ${cols * size} ${rows * size}`}
+    width={`${cols * size}px`}
+    height={`${rows * size}px`}
     fill="none"
   >
     <defs>
