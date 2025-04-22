@@ -7,11 +7,11 @@ type AppProps = {
 };
 
 const { floor } = Math;
-const size = 20;
+const size = 40;
 
 export const App = ({ width, height }: AppProps) => (
   <>
     <Pond cols={floor(width / size)} rows={floor(height / size)} size={size} />
-    <Hud />
+    {/* <Hud /> */}
   </>
 );
