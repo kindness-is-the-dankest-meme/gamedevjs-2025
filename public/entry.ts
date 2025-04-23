@@ -1,12 +1,14 @@
+import get from "https://esm.sh/lodash-es@4.17.21/get.js";
 import { z } from "https://esm.sh/zod@3.24.3";
 import type { Child, El, Props, Tag } from "./lib/real.ts";
 
 declare const m: HTMLElement;
 
-const { from } = Array;
+const { from, isArray } = Array;
 const { assign, entries, fromEntries } = Object;
 
-const amap = (ns: Record<string, string>) => (n: string) => ns[n] ?? n;
+const amap = (ns: Record<string, string>) => (n: unknown): string =>
+  ns[String(n)] ?? String(n);
 const mapn = amap({
   class: "className",
 });
@@ -57,7 +59,7 @@ const children = (
   return acc;
 };
 
-const scan = (el: Element | NodeListOf<ChildNode>): El =>
+const scan = (el: Element | HTMLCollection | NodeListOf<ChildNode>): El =>
   el instanceof Element
     ? assign(
       { tag: el.tagName.toLowerCase() as Tag },
@@ -66,23 +68,126 @@ const scan = (el: Element | NodeListOf<ChildNode>): El =>
         children: el.childNodes.values().toArray().reduce(children, []),
       },
     )
+    : el instanceof HTMLCollection
+    ? assign(
+      { tag: null },
+      el.length && { children: from(el).reduce(children, []) },
+    )
     : assign(
       { tag: null },
       el.length && { children: el.values().toArray().reduce(children, []) },
     );
 
+// TODO: this should be initial state of the view, only accepting the `children`
+// case might solve the whitespace problem
+// console.log(scan(m.children));
+
 const { requestAnimationFrame: raf, cancelAnimationFrame: caf } = globalThis;
 let frameId = 0;
+
+const Patch = z.object({
+  op: z.enum(["add", "remove", "replace"]),
+  path: z.array(
+    z.union([
+      z.enum(["tag", "props", "children"]),
+      z.number(),
+      z.string(),
+    ]),
+  ),
+  value: z.any(),
+});
 
 const worky = new Worker("./worky.ts", { type: "module" });
 worky.addEventListener(
   "message",
   ({ data }) => {
     caf(frameId);
-    frameId = raf(() => {
-      const nextNode = grow(data);
-      m.firstChild ? m.replaceChildren(nextNode) : m.appendChild(nextNode);
-    });
+    frameId = raf(() => {});
+
+    const { success, data: patch, error } = Patch.safeParse(data);
+    if (!success) {
+      console.error(error);
+      console.info({ data });
+      return;
+    }
+
+    const { op, path, value } = patch;
+
+    switch (op) {
+      case "add": {
+        if (path.includes("props")) {
+          get(m, path.slice(0, path.indexOf("props")))
+            ?.setAttribute(
+              nmap(path.at(-1)),
+              String(value),
+            );
+
+          return;
+        }
+
+        if (path.includes("children")) {
+          get(m, path.slice(0, path.lastIndexOf("children")), m).appendChild(
+            grow(
+              isArray(value) ? { tag: null, children: value } : value,
+            ),
+          );
+
+          return;
+        }
+
+        console.log(patch);
+        break;
+      }
+
+      case "replace": {
+        if (path.includes("props")) {
+          get(m, path.slice(0, path.indexOf("props")))
+            ?.setAttribute(
+              nmap(path.at(-1)),
+              String(value),
+            );
+
+          return;
+        }
+
+        if (path.includes("children")) {
+          get(m, path.slice(0, path.lastIndexOf("children")), m)
+            .replaceChildren(
+              grow(
+                isArray(value) ? { tag: null, children: value } : value,
+              ),
+            );
+
+          return;
+        }
+
+        console.log(patch);
+        break;
+      }
+
+      case "remove": {
+        if (path.includes("props")) {
+          get(m, path.slice(0, path.indexOf("props")))
+            ?.removeAttribute(
+              nmap(path.at(-1)),
+            );
+
+          return;
+        }
+
+        if (path.includes("children")) {
+          get(m, path)?.remove();
+          return;
+        }
+
+        console.log(patch);
+        break;
+      }
+
+      default: {
+        console.log(patch);
+      }
+    }
   },
 );
 // worky.postMessage(scan(m.childNodes));
