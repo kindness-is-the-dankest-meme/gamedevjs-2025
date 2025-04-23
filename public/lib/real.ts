@@ -1,3 +1,5 @@
+import { assign, hasOwn } from "./free.ts";
+
 export declare namespace JSX {
   export type IntrinsicElements = { [tag: string]: unknown };
   export type Element = unknown;
@@ -14,9 +16,6 @@ export type El = {
   props?: Props;
   children?: Child[];
 };
-
-// const { isArray } = Array;
-const { assign, hasOwn } = Object;
 
 export const frag = null;
 export const Frag = (props?: Props, children?: Child[]) =>

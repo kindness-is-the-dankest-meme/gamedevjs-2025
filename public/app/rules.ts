@@ -1,6 +1,6 @@
+import { floor, random } from "../lib/free.ts";
 import { isvt, nbors } from "./tiles.ts";
 
-const { floor, random } = Math;
 const odds = (n: number) => random() < n;
 
 const cules = (

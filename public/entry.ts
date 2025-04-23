@@ -1,11 +1,17 @@
 import get from "https://esm.sh/lodash-es@4.17.21/get.js";
 import { z } from "https://esm.sh/zod@3.24.3";
 import type { Child, El, Props, Tag } from "./lib/real.ts";
+import {
+  assign,
+  caf,
+  entries,
+  from,
+  fromEntries,
+  isArray,
+  raf,
+} from "./lib/free.ts";
 
 declare const m: HTMLElement;
-
-const { from, isArray } = Array;
-const { assign, entries, fromEntries } = Object;
 
 const amap = (ns: Record<string, string>) => (n: unknown): string =>
   ns[String(n)] ?? String(n);
@@ -82,7 +88,6 @@ const scan = (el: Element | HTMLCollection | NodeListOf<ChildNode>): El =>
 // case might solve the whitespace problem
 // console.log(scan(m.children));
 
-const { requestAnimationFrame: raf, cancelAnimationFrame: caf } = globalThis;
 let frameId = 0;
 
 const Patch = z.object({
@@ -112,7 +117,6 @@ worky.addEventListener(
     }
 
     const { op, path, value } = patch;
-
     switch (op) {
       case "add": {
         if (path.includes("props")) {

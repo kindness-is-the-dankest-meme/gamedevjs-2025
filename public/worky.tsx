@@ -5,14 +5,17 @@ import mergeWith from "https://esm.sh/lodash-es@4.17.21/mergeWith.js";
 import { z } from "https://esm.sh/zod@3.24.3";
 import { App } from "./components/App.tsx";
 import type { El } from "./lib/real.ts";
+import {
+  fcev,
+  fevt,
+  forEach,
+  fromEvent,
+  isArray,
+  keys,
+  type Last,
+} from "./lib/free.ts";
 
-type Last<T extends any[]> = T extends [...infer _, infer L] ? L : never;
 type Customizer = Last<Parameters<typeof mergeWith<any, any>>>;
-type F<T> = T extends new (...args: infer A) => infer R ? (...args: A) => R
-  : never;
-
-const { isArray } = Array;
-const { keys } = Object;
 
 const ResizeEvent = z.object({
   type: z.literal("resize"),
@@ -36,9 +39,6 @@ const produce = produceWithPatches((draft, state) => {
   mergeWith(draft, state, customizer);
 });
 
-const fevt: F<typeof EventTarget> = () => new EventTarget();
-const fcev: F<typeof CustomEvent> = (type, init) => new CustomEvent(type, init);
-
 const evt = fevt();
 let tree: El = { tag: null };
 
@@ -46,7 +46,7 @@ const render = (nextTree: any) => {
   const [prodTree, patches] = produce(tree, nextTree);
 
   if (!isEqual(nextTree, prodTree)) {
-    console.log({
+    console.error("The produced tree did not match the expected tree", {
       nextTree,
       prodTree,
     });
@@ -56,43 +56,6 @@ const render = (nextTree: any) => {
   patches.forEach((patch) =>
     evt.dispatchEvent(fcev("patch", { detail: patch }))
   );
-};
-
-const fromEvent = async function* <E extends Event>(
-  target: EventTarget,
-  type: string,
-): AsyncGenerator<E> {
-  let { promise, resolve } = Promise.withResolvers<void>();
-
-  const events = new Set<E>(),
-    listener = (event: Event) => {
-      events.add(event as E);
-      resolve();
-
-      ({ promise, resolve } = Promise.withResolvers<void>());
-    };
-
-  try {
-    target.addEventListener(type, listener);
-
-    while (true) {
-      await promise;
-      yield* events.values();
-      events.clear();
-    }
-  } finally {
-    target.removeEventListener(type, listener);
-  }
-};
-
-const forEach = async <E extends Event>(
-  eventStream: AsyncGenerator<E>,
-  listener: (event: E, index: number) => void,
-) => {
-  let i = 0;
-  for await (const event of eventStream) {
-    listener(event, i++);
-  }
 };
 
 forEach(
