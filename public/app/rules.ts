@@ -1,4 +1,4 @@
-import { isvt, nbors } from "../app/tiles.ts";
+import { isvt, nbors } from "./tiles.ts";
 
 const { floor, random } = Math;
 const odds = (n: number) => random() < n;

@@ -1,6 +1,6 @@
 import { grid, tapg } from "../app/grids.ts";
 import { rules } from "../app/rules.ts";
-import { tiles } from "../app/tiles.ts";
+import { paths } from "../app/paths.ts";
 import { Ponds } from "./Ponds.tsx";
 
 type WorldProps = {
@@ -19,7 +19,7 @@ export const World = ({ cols, rows, size }: WorldProps) => (
     fill="none"
   >
     <defs>
-      {tiles(size).map(([id, d]) => (
+      {paths(size).map(([id, d]) => (
         <g id={id} key={id}>
           {d && <path d={d} />}
           <rect width={size} height={size} />
