@@ -1,6 +1,6 @@
 import { grid, tapg } from "../app/grids.ts";
-import { rules } from "../app/rules.ts";
 import { paths } from "../app/paths.ts";
+import { rules } from "../app/rules.ts";
 import { Ponds } from "./Ponds.tsx";
 
 type WorldProps = {
