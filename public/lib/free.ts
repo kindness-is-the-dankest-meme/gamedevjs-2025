@@ -23,7 +23,7 @@ export const fevt: F<typeof EventTarget> = () => new EventTarget();
 export const fcev: F<typeof CustomEvent> = (type, init) =>
   new CustomEvent(type, init);
 
-export const fromEvent = async function* <E extends Event>(
+export const fromEvent = async function* <E extends Event = Event>(
   target: EventTarget,
   type: string,
 ): AsyncGenerator<E> {

@@ -1,15 +1,17 @@
 import get from "https://esm.sh/lodash-es@4.17.21/get.js";
 import { z } from "https://esm.sh/zod@3.24.3";
-import type { Child, El, Props, Tag } from "./lib/real.ts";
 import {
   assign,
   caf,
   entries,
+  forEach,
   from,
   fromEntries,
+  fromEvent,
   isArray,
   raf,
 } from "./lib/free.ts";
+import type { Child, El, Props, Tag } from "./lib/real.ts";
 
 declare const m: HTMLElement;
 
@@ -325,11 +327,11 @@ const InnerSize = z
     height,
   }));
 
-globalThis.addEventListener("resize", ({ target, type }) => {
+forEach(fromEvent(globalThis, "resize"), ({ target, type }) => {
   const { width, height } = InnerSize.parse(target);
   worky.postMessage({ type, width, height });
 });
 
 const dispatchResize = () => globalThis.dispatchEvent(new Event("resize"));
-m.addEventListener("click", dispatchResize);
+forEach(fromEvent(m, "click"), dispatchResize);
 dispatchResize();

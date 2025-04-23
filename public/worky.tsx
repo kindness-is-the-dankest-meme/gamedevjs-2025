@@ -4,7 +4,6 @@ import isPlainObject from "https://esm.sh/lodash-es@4.17.21/isPlainObject.js";
 import mergeWith from "https://esm.sh/lodash-es@4.17.21/mergeWith.js";
 import { z } from "https://esm.sh/zod@3.24.3";
 import { App } from "./components/App.tsx";
-import type { El } from "./lib/real.ts";
 import {
   fcev,
   fevt,
@@ -14,6 +13,7 @@ import {
   keys,
   type Last,
 } from "./lib/free.ts";
+import type { El } from "./lib/real.ts";
 
 type Customizer = Last<Parameters<typeof mergeWith<any, any>>>;
 
