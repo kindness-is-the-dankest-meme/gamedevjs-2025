@@ -1,104 +1,72 @@
-import { assign, hasOwn } from "./free.ts";
+import { assign } from "./free.ts";
 
 export declare namespace JSX {
   export type IntrinsicElements = { [tag: string]: unknown };
   export type Element = unknown;
 }
 
-export type Props = Record<string, unknown>;
-export type Child = El | string;
-
-type NameTag = keyof (HTMLElementTagNameMap & SVGElementTagNameMap);
-type FnTag = (data: Props | null, children: Child[]) => El;
-export type Tag = NameTag | FnTag;
-
 export type El = {
-  tag: Tag | null;
-  props?: Props;
-  children?: Child[];
+  tag: TagN | null;
+  props?: Props | null;
+  children?: ChE[];
 };
 
-export const frag = null;
-export const Frag = (props?: Props, children?: Child[]) =>
-  el(
-    frag,
-    props ?? null,
-    ...(children ?? []),
-  );
+export type Props = Record<PropertyKey, unknown>;
 
-const cise = (c: Child): c is El => typeof c === "object" && hasOwn(c, "tag");
-const tisn = (
-  tag: Tag | null,
-): tag is NameTag | null => (tag === null || typeof tag === "string");
-const tisf = (tag: Tag | null): tag is FnTag => typeof tag === "function";
+export type ChE = El | string;
+type ChF = (path: Path) => ChE;
+export type Ch = ChE | ChF;
 
-const elc = (c: Child): Child =>
-  cise(c) ? el(c.tag, c.props ?? null, ...(c.children ?? [])) : c;
+type TagN = keyof (HTMLElementTagNameMap & SVGElementTagNameMap);
+type TagF = (data: Props | null, children: ChE[]) => El | ChF;
+export type Tag = TagN | TagF;
 
-const eln = (
-  tag: NameTag | null,
-  props: Props | null,
-  cs: Child[],
-): Child =>
-  assign(
-    { tag },
-    props ? { props } : null,
-    cs.length && {
-      children: cs.flat().map(elc).filter(Boolean),
-    },
-  );
+type Path = ("children" | number | string)[];
 
-const elf = (
-  tag: FnTag,
-  props: Props | null,
-  cs: Child[],
-): Child => {
-  const { tag: t, props: p, children: c } = tag(props ?? null, cs);
-  return el(t, p ?? null, ...(c ?? []));
+// const tiss = (t: Tag | null): t is TagN => typeof t === "string";
+const tisf = (t: Tag | null): t is TagF => typeof t === "function";
+const cisf = (c: Ch): c is ChF => typeof c === "function";
+
+const ch = (c: Ch, path: Path): ChE => {
+  if (cisf(c)) {
+    return c(path);
+  }
+
+  return c;
 };
+
+const ci = (path: Path) => (c: Ch, i: number) =>
+  ch(c, [...path, "children", i]);
 
 export const el = (
   tag: Tag | null,
   props: Props | null,
-  ...cs: Child[]
-): Child =>
-  tisn(tag) ? eln(tag, props, cs) : tisf(tag) ? elf(tag, props, cs) : tag;
+  ...cs: Ch[]
+) =>
+(path: Path = []): ChE => {
+  if (tisf(tag)) {
+    return ch(
+      tag(
+        props ?? null,
+        cs.flat(Infinity).map(ci(path)).filter(Boolean),
+      ),
+      path,
+    );
+  }
 
-// export const el = (
-//   tag: Tag | null,
-//   props: Props | null,
-//   ...cs: Child[]
-// ): Child => {
-//   const elp = (
-//     tag: Tag | null,
-//     props: Props | null,
-//     cs: Child[],
-//     path: ("children" | number)[],
-//   ): Child => {
-//     if (isn(tag)) {
-//       return assign(
-//         { tag },
-//         props ? { props } : null,
-//         cs.length && {
-//           children: cs.flat().map((c, i) =>
-//             ise(c)
-//               ? elp(c.tag, c.props ?? null, c.children ?? [], [
-//                 ...path,
-//                 "children",
-//                 i,
-//               ])
-//               : c
-//           ).filter(Boolean),
-//         },
-//       );
-//     }
+  return assign(
+    { tag },
+    props ? { props } : null,
+    cs.length && {
+      children: cs.flat(Infinity).map(ci(path)).filter(Boolean),
+    },
+  );
+};
 
-//     if (isf(tag)) {
-//       const { tag: t, props: p, children: c } = tag(props ?? null, cs);
-//       return elp(t, p ?? null, c ?? [], path);
-//     }
-//     return tag;
-//   };
-
-//   return elp(tag, props, cs, []);
-// };
+export const frag = null;
+export const Frag = (props?: Props, cs?: Ch[]) =>
+  el(
+    frag,
+    props ?? null,
+    ...(cs ?? []),
+  );

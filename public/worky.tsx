@@ -42,7 +42,8 @@ const produce = produceWithPatches((draft, state) => {
 const evt = fevt();
 let tree: El = { tag: null };
 
-const render = (nextTree: any) => {
+const render = (nextTreeFn: any) => {
+  const nextTree = nextTreeFn();
   const [prodTree, patches] = produce(tree, nextTree);
 
   if (!isEqual(nextTree, prodTree)) {
