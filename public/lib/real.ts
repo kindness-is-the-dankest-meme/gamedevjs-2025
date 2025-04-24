@@ -26,11 +26,14 @@ export const Frag = (props?: Props, children?: Child[]) =>
     ...(children ?? []),
   );
 
-const ise = (c: Child): c is El => typeof c === "object" && hasOwn(c, "tag");
-const isn = (
+const cise = (c: Child): c is El => typeof c === "object" && hasOwn(c, "tag");
+const tisn = (
   tag: Tag | null,
 ): tag is NameTag | null => (tag === null || typeof tag === "string");
-const isf = (tag: Tag | null): tag is FnTag => typeof tag === "function";
+const tisf = (tag: Tag | null): tag is FnTag => typeof tag === "function";
+
+const elc = (c: Child): Child =>
+  cise(c) ? el(c.tag, c.props ?? null, ...(c.children ?? [])) : c;
 
 const eln = (
   tag: NameTag | null,
@@ -41,9 +44,7 @@ const eln = (
     { tag },
     props ? { props } : null,
     cs.length && {
-      children: cs.flat().map((c) =>
-        ise(c) ? el(c.tag, c.props ?? null, ...(c.children ?? [])) : c
-      ).filter(Boolean),
+      children: cs.flat().map(elc).filter(Boolean),
     },
   );
 
@@ -61,7 +62,7 @@ export const el = (
   props: Props | null,
   ...cs: Child[]
 ): Child =>
-  isn(tag) ? eln(tag, props, cs) : isf(tag) ? elf(tag, props, cs) : tag;
+  tisn(tag) ? eln(tag, props, cs) : tisf(tag) ? elf(tag, props, cs) : tag;
 
 // export const el = (
 //   tag: Tag | null,
