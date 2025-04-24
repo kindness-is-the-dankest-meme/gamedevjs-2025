@@ -7,9 +7,10 @@ export declare namespace JSX {
 
 export type Props = Record<string, unknown>;
 export type Child = El | string;
-export type Tag =
-  | keyof (HTMLElementTagNameMap & SVGElementTagNameMap)
-  | ((data: Props | null, children: Child[]) => El);
+
+type NameTag = keyof (HTMLElementTagNameMap & SVGElementTagNameMap);
+type FnTag = (data: Props | null, children: Child[]) => El;
+export type Tag = NameTag | FnTag;
 
 export type El = {
   tag: Tag | null;
@@ -25,33 +26,41 @@ export const Frag = (props?: Props, children?: Child[]) =>
     ...(children ?? []),
   );
 
+const eln = (
+  tag: NameTag | null,
+  props: Props | null,
+  cs: Child[],
+): Child =>
+  assign(
+    { tag },
+    props ? { props } : null,
+    cs.length && {
+      children: cs.map((c, i) => {
+        if (typeof c === "object" && hasOwn(c, "tag")) {
+          return el(c.tag, c.props ?? null, ...(c.children ?? []));
+        }
+
+        return c;
+      }).filter(Boolean),
+    },
+  );
+
+const elf = (
+  tag: FnTag,
+  props: Props | null,
+  cs: Child[],
+): Child => {
+  const { tag: t, props: p, children: c } = tag(props ?? null, cs);
+  return el(t, p ?? null, ...(c ?? []));
+};
+
 export const el = (
   tag: Tag | null,
   props: Props | null,
-  ...children: Child[]
-): Child => {
-  const cs = children.flat();
-
-  if (tag === null || typeof tag === "string") {
-    return assign(
-      { tag },
-      props ? { props } : null,
-      cs.length && {
-        children: cs.map((c) => {
-          if (typeof c === "object" && hasOwn(c, "tag")) {
-            return el(c.tag, c.props ?? null, ...(c.children ?? []));
-          }
-
-          return c;
-        }).filter(Boolean),
-      },
-    );
-  }
-
-  if (typeof tag === "function") {
-    const { tag: t, props: p, children: c } = tag(props ?? null, cs);
-    return el(t, p ?? null, ...(c ?? []));
-  }
-
-  return tag;
-};
+  ...cs: Child[]
+): Child =>
+  (tag === null || typeof tag === "string")
+    ? eln(tag, props, cs.flat())
+    : (typeof tag === "function")
+    ? elf(tag, props, cs.flat())
+    : tag;
