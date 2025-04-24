@@ -11,7 +11,7 @@ export type El = {
   children?: ChE[];
 };
 
-export type Props = Record<PropertyKey, unknown>;
+export type Props = Record<PropertyKey, any>;
 
 export type ChE = El | string;
 type ChF = (path: Path) => ChE;
@@ -23,7 +23,7 @@ export type Tag = TagN | TagF;
 
 type Path = ("children" | number | string)[];
 
-// const tiss = (t: Tag | null): t is TagN => typeof t === "string";
+const _tiss = (t: Tag | null): t is TagN => typeof t === "string";
 const tisf = (t: Tag | null): t is TagF => typeof t === "function";
 const cisf = (c: Ch): c is ChF => typeof c === "function";
 
@@ -38,6 +38,68 @@ const ch = (c: Ch, path: Path): ChE => {
 const ci = (path: Path) => (c: Ch, i: number) =>
   ch(c, [...path, "children", i]);
 
+/**
+ * for my own curiosity later, this is the non-lazy version:
+ *
+ * ```ts
+ * export const el = (
+ *   tag: Tag | null,
+ *   props: Props | null,
+ *   ...cs: ChE[]
+ * ) => {
+ *   if (tisf(tag)) {
+ *     return tag(
+ *       props ?? null,
+ *       cs.flat(Infinity).filter(Boolean),
+ *     );
+ *   }
+ *
+ *   return assign(
+ *     { tag },
+ *     props ? { props } : null,
+ *     cs.length && {
+ *       children: cs.flat(Infinity).filter(Boolean),
+ *     },
+ *   );
+ * };
+ * ```
+ */
+
+type Hctx = {
+  hooks: any[];
+  i: number;
+};
+
+const hreg = new Map<string, Hctx>();
+let currCtx: Hctx | null = null;
+
+const useHook = <T>(init: () => T) => {
+  if (!currCtx) {
+    throw new Error("`useHook` requires a component context");
+  }
+
+  const { hooks, i } = currCtx;
+  (i >= hooks.length) && hooks.push(init());
+  currCtx.i = i + 1;
+  return hooks[i];
+};
+
+type SetState<T> = (prev: T) => T;
+const isSetState = <T>(x: unknown): x is SetState<T> => typeof x === "function";
+export const useState = <T>(init: T) => {
+  console.log(currCtx);
+  const state = useHook(() => init);
+  const setState = (next: T | SetState<T>) => {
+    if (!currCtx) {
+      throw new Error("`useState` requires a component context");
+    }
+
+    currCtx.hooks[currCtx.i - 1] = isSetState(next) ? next(state) : next;
+  };
+
+  return [state, setState] as const;
+};
+
 export const el = (
   tag: Tag | null,
   props: Props | null,
@@ -45,13 +107,24 @@ export const el = (
 ) =>
 (path: Path = []): ChE => {
   if (tisf(tag)) {
-    return ch(
-      tag(
-        props ?? null,
-        cs.flat(Infinity).map(ci(path)).filter(Boolean),
-      ),
+    const ctxid = String(props?.key ?? path.concat(tag.name).join("."));
+
+    const prevCtx = currCtx;
+    currCtx = hreg.get(ctxid) ?? {
+      hooks: [],
+      i: 0,
+    };
+    currCtx.i = 0;
+
+    const e = ch(
+      tag(props ?? null, cs.flat(Infinity).map(ci(path)).filter(Boolean)),
       path,
     );
+
+    hreg.set(ctxid, currCtx);
+    currCtx = prevCtx;
+
+    return e;
   }
 
   return assign(
@@ -64,7 +137,7 @@ export const el = (
 };
 
 export const frag = null;
-export const Frag = (props?: Props, cs?: Ch[]) =>
+export const Frag = (props?: Props, cs?: Parameters<typeof el>[3][]) =>
   el(
     frag,
     props ?? null,
