@@ -26,6 +26,12 @@ export const Frag = (props?: Props, children?: Child[]) =>
     ...(children ?? []),
   );
 
+const ise = (c: Child): c is El => typeof c === "object" && hasOwn(c, "tag");
+const isn = (
+  tag: Tag | null,
+): tag is NameTag | null => (tag === null || typeof tag === "string");
+const isf = (tag: Tag | null): tag is FnTag => typeof tag === "function";
+
 const eln = (
   tag: NameTag | null,
   props: Props | null,
@@ -35,13 +41,9 @@ const eln = (
     { tag },
     props ? { props } : null,
     cs.length && {
-      children: cs.map((c, i) => {
-        if (typeof c === "object" && hasOwn(c, "tag")) {
-          return el(c.tag, c.props ?? null, ...(c.children ?? []));
-        }
-
-        return c;
-      }).filter(Boolean),
+      children: cs.flat().map((c) =>
+        ise(c) ? el(c.tag, c.props ?? null, ...(c.children ?? [])) : c
+      ).filter(Boolean),
     },
   );
 
@@ -59,8 +61,43 @@ export const el = (
   props: Props | null,
   ...cs: Child[]
 ): Child =>
-  (tag === null || typeof tag === "string")
-    ? eln(tag, props, cs.flat())
-    : (typeof tag === "function")
-    ? elf(tag, props, cs.flat())
-    : tag;
+  isn(tag) ? eln(tag, props, cs) : isf(tag) ? elf(tag, props, cs) : tag;
+
+// export const el = (
+//   tag: Tag | null,
+//   props: Props | null,
+//   ...cs: Child[]
+// ): Child => {
+//   const elp = (
+//     tag: Tag | null,
+//     props: Props | null,
+//     cs: Child[],
+//     path: ("children" | number)[],
+//   ): Child => {
+//     if (isn(tag)) {
+//       return assign(
+//         { tag },
+//         props ? { props } : null,
+//         cs.length && {
+//           children: cs.flat().map((c, i) =>
+//             ise(c)
+//               ? elp(c.tag, c.props ?? null, c.children ?? [], [
+//                 ...path,
+//                 "children",
+//                 i,
+//               ])
+//               : c
+//           ).filter(Boolean),
+//         },
+//       );
+//     }
+
+//     if (isf(tag)) {
+//       const { tag: t, props: p, children: c } = tag(props ?? null, cs);
+//       return elp(t, p ?? null, c ?? [], path);
+//     }
+//     return tag;
+//   };
+
+//   return elp(tag, props, cs, []);
+// };
