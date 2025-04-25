@@ -1,12 +1,4 @@
-import {
-  fevt,
-  forEach,
-  fromEvent,
-  fset,
-  fwkr,
-  keys,
-  merge,
-} from "./lib/free.ts";
+import { fevt, forEach, fromEvent, fset, fwkr, merge } from "./lib/free.ts";
 import { patch } from "./patch.ts";
 import { GlobalThisEvent, WorkerEvent } from "./types.ts";
 
@@ -69,15 +61,17 @@ forEach(
       }
 
       case "keydown": {
-        if (!keysDown.has(event.key)) {
-          keysDown.add(event.key);
+        const k = event.key.toLowerCase();
+        if (!keysDown.has(k)) {
+          keysDown.add(k);
           w.postMessage({ type: "keys", keys: keysDown.values().toArray() });
         }
         break;
       }
 
       case "keyup": {
-        if (keysDown.delete(event.key)) {
+        const k = event.key.toLowerCase();
+        if (keysDown.delete(k)) {
           w.postMessage({ type: "keys", keys: keysDown.values().toArray() });
         }
         break;
