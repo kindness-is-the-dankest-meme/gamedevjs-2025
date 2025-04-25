@@ -137,14 +137,42 @@ export const useMemo = <T>(compute: () => T, deps?: unknown[]) => {
   return memo;
 };
 
-export const cbcks = fmap<string, <E extends Event>(event: E) => void>();
+export const useStore = <T>(
+  sub: (cb: () => void) => () => void,
+  get: () => T,
+): T => {
+  if (!hctx) {
+    throw ferr("`useStore` requires a component context");
+  }
 
-const post = (props: Props, tid: string): Props =>
+  useHook(() => get());
+  useHook(() => null);
+  const { hooks, index } = hctx;
+
+  useEffect(() => {
+    const unsub = sub(() => {
+      hooks[index - 2] = get();
+      self.dispatchEvent(
+        fmev("message", {
+          data: { type: "render" },
+        }),
+      );
+    });
+
+    hooks[index - 1] = unsub;
+    return unsub;
+  }, [sub]);
+
+  return hooks[index - 2];
+};
+
+export const cbs = fmap<string, <E extends Event>(event: E) => void>();
+const hcbs = (props: Props, tid: string): Props =>
   fromEntries(
     entries(props).map(([k, v]) => {
       if (k.startsWith("on") && typeof v === "function") {
         const cbid = `${tid}.${k}`;
-        cbcks.set(cbid, v);
+        cbs.set(cbid, v);
         return [k, cbid];
       }
 
@@ -168,7 +196,7 @@ export const el = (
     };
     hctx.index = 0;
 
-    const e = ch(tag(props ? post(props, hid) : null, cj(cs, path)), path);
+    const e = ch(tag(props ? hcbs(props, hid) : null, cj(cs, path)), path);
 
     hreg.set(hid, hctx);
     hctx = pctx;
@@ -179,7 +207,7 @@ export const el = (
   const tid = tag ? path.concat(tag).join(".") : path.join(".");
   return assign(
     { tag },
-    props ? { props: post(props, tid) } : null,
+    props ? { props: hcbs(props, tid) } : null,
     cs.length && {
       children: cj(cs, path),
     },
