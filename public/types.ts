@@ -33,6 +33,14 @@ const ResizeEvent = z.object({
   type: z.literal("resize"),
   target: InnerSize,
 });
+const KeyDownEvent = z.object({
+  type: z.literal("keydown"),
+  key: z.string(),
+});
+const KeyUpEvent = z.object({
+  type: z.literal("keyup"),
+  key: z.string(),
+});
 const RpcEvent = z.object({
   type: z.literal("rpc"),
   detail: Rpc,
@@ -40,6 +48,8 @@ const RpcEvent = z.object({
 
 export const GlobalThisEvent = z.discriminatedUnion("type", [
   ResizeEvent,
+  KeyDownEvent,
+  KeyUpEvent,
   RpcEvent,
 ]);
 
@@ -74,6 +84,10 @@ const ResizeMsg = z.object({
   width: z.number(),
   height: z.number(),
 });
+const KeysMsg = z.object({
+  type: z.literal("keys"),
+  keys: z.array(z.string()),
+});
 const RpcMsg = Rpc.merge(z.object({
   type: z.literal("rpc"),
 }));
@@ -81,5 +95,6 @@ const RpcMsg = Rpc.merge(z.object({
 export const Msg = z.discriminatedUnion("type", [
   RenderMsg,
   ResizeMsg,
+  KeysMsg,
   RpcMsg,
 ]);
