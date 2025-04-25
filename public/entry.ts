@@ -46,11 +46,23 @@ forEach(
     const { type } = event;
     switch (type) {
       case "resize": {
+        /**
+         * n.b. `event.target` is a transformed `InnerSize` object
+         * @see ./types.ts
+         */
         w.postMessage({ type, ...event.target });
         break;
       }
 
       case "send": {
+        /**
+         * n.b. `event.detail` an object with a `callback` string (path to the
+         * callback in `cbcks`) and an `args` tuple that's just the serialized
+         * event object
+         *
+         * @see ./types.ts
+         * @see ./worky.ts
+         */
         w.postMessage({ type, ...event.detail });
         break;
       }
