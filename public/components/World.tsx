@@ -22,20 +22,26 @@ export const World = ({ cols, rows, size }: WorldProps) => {
   const [x, setX] = useState((cols * size) / 2 + size);
   const [y, setY] = useState((rows * size) / 2);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = Date.now();
-      setX(() => (cols * size) / 2 + sin(now / 500) * size * 3);
-      setY(() => (rows * size) / 2 + cos(now / 500) * size * 3);
-    }, 10);
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     const now = Date.now();
+  //     setX(() => (cols * size) / 2 + sin(now / 500) * size * 3);
+  //     setY(() => (rows * size) / 2 + cos(now / 500) * size * 3);
+  //   }, 10);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   return (
     <svg
       width={`${cols * size}px`}
       height={`${rows * size}px`}
       fill="none"
+      onPointerEnter={() => setPointer(true)}
+      onPointerLeave={() => setPointer(false)}
+      onPointerMove={({ x, y }: any) => {
+        setX(x);
+        setY(y);
+      }}
     >
       <defs>
         {paths(size).map(([id, d]) => (
