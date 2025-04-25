@@ -20,6 +20,7 @@ html,
 body,
 main {
   background: hsl(100, 40%, 60%);
+  color: white;
 }
 
 main {
