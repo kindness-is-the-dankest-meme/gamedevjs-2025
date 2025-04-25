@@ -1,4 +1,4 @@
-import { assign } from "./free.ts";
+import { assign, ferr, fmap, fmev } from "./free.ts";
 
 export declare namespace JSX {
   export type IntrinsicElements = { [tag: string]: unknown };
@@ -70,12 +70,12 @@ type Hctx = {
   i: number;
 };
 
-const hreg = new Map<string, Hctx>();
+const hreg = fmap<string, Hctx>();
 let currCtx: Hctx | null = null;
 
 const useHook = <T>(init: () => T) => {
   if (!currCtx) {
-    throw new Error("`useHook` requires a component context");
+    throw ferr("`useHook` requires a component context");
   }
 
   const { hooks, i } = currCtx;
@@ -88,7 +88,7 @@ type SetState<T> = (prev: T) => T;
 const isSetState = <T>(x: unknown): x is SetState<T> => typeof x === "function";
 export const useState = <T>(init: T) => {
   if (!currCtx) {
-    throw new Error("`useState` requires a component context");
+    throw ferr("`useState` requires a component context");
   }
 
   useHook(() => init);
@@ -97,7 +97,7 @@ export const useState = <T>(init: T) => {
   const setState = (next: T | SetState<T>) => {
     hooks[i - 1] = isSetState(next) ? next(hooks[i - 1]) : next;
     self.dispatchEvent(
-      new MessageEvent("message", {
+      fmev("message", {
         data: { type: "render" },
       }),
     );
@@ -109,7 +109,7 @@ export const useState = <T>(init: T) => {
 type Effect = () => void | (() => void);
 export const useEffect = (effect: Effect, deps?: unknown[]) => {
   if (!currCtx) {
-    throw new Error("`useEffect` requires a component context");
+    throw ferr("`useEffect` requires a component context");
   }
 
   const cleanup = useHook(() => null);
