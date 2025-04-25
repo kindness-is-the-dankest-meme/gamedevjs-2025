@@ -1,6 +1,6 @@
 import get from "https://esm.sh/lodash-es@4.17.21/get.js";
 import type { z } from "https://esm.sh/zod@3.24.3";
-import { grow, nmap } from "./app/trees.ts";
+import { grow, nmap, twig } from "./app/trees.ts";
 import { isArray } from "./lib/free.ts";
 import type { Patch } from "./types.ts";
 
@@ -10,11 +10,9 @@ export const patch = ({ op, path, value }: z.infer<typeof Patch>): void => {
   switch (op) {
     case "add": {
       if (path.includes("props")) {
-        get(m, path.slice(0, path.indexOf("props")))
-          ?.setAttribute(
-            nmap(path.at(-1)),
-            String(value),
-          );
+        twig(get(m, path.slice(0, path.indexOf("props"))), {
+          [nmap(path.at(-1))]: value,
+        });
 
         return;
       }
@@ -35,11 +33,9 @@ export const patch = ({ op, path, value }: z.infer<typeof Patch>): void => {
 
     case "replace": {
       if (path.includes("props")) {
-        get(m, path.slice(0, path.indexOf("props")))
-          ?.setAttribute(
-            nmap(path.at(-1)),
-            String(value),
-          );
+        twig(get(m, path.slice(0, path.indexOf("props"))), {
+          [nmap(path.at(-1))]: String(value),
+        });
 
         return;
       }
@@ -62,6 +58,7 @@ export const patch = ({ op, path, value }: z.infer<typeof Patch>): void => {
     case "remove": {
       if (path.includes("props")) {
         get(m, path.slice(0, path.indexOf("props")))
+          // TODO: handle removing event handlers
           ?.removeAttribute(
             nmap(path.at(-1)),
           );
