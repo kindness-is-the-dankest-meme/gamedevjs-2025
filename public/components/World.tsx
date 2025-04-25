@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "../lib/real.ts";
-import { cos, sin } from "../lib/free.ts";
+import { cos, floor, sin, π } from "../lib/free.ts";
 import { grid, tapg } from "../app/grids.ts";
 import { paths } from "../app/paths.ts";
 import { rules } from "../app/rules.ts";
 import { Pointer } from "./Pointer.tsx";
 import { Ponds } from "./Ponds.tsx";
+import { Boat } from "./Boat.tsx";
 
 type WorldProps = {
   cols: number;
@@ -21,15 +22,15 @@ export const World = ({ cols, rows, size }: WorldProps) => {
   const [pointer, setPointer] = useState(true);
   const [x, setX] = useState((cols * size) / 2 + size);
   const [y, setY] = useState((rows * size) / 2);
+  const [r, setR] = useState(0);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     const now = Date.now();
-  //     setX(() => (cols * size) / 2 + sin(now / 500) * size * 3);
-  //     setY(() => (rows * size) / 2 + cos(now / 500) * size * 3);
-  //   }, 10);
-  //   return () => clearInterval(interval);
-  // }, []);
+  useEffect(() => {
+    const interval = setInterval(
+      () => setR(() => (Date.now() / 1_000)),
+      10,
+    );
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <svg
@@ -52,6 +53,12 @@ export const World = ({ cols, rows, size }: WorldProps) => {
         ))}
       </defs>
       <Ponds ts={ts} s={size} />
+      <Boat
+        x={(cols * size) / 2}
+        y={(rows * size) / 2}
+        r={r}
+        s={floor(size * 0.8)}
+      />
       {pointer && <Pointer x={x} y={y} />}
     </svg>
   );

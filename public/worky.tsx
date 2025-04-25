@@ -16,7 +16,6 @@ import { cbcks, type El } from "./lib/real.ts";
 import { Msg } from "./types.ts";
 
 type Customizer = Last<Parameters<typeof mergeWith<any, any>>>;
-
 const customizer: Customizer = (a, b, k) => {
   if (k === "props" && isPlainObject(a)) {
     const bks = keys(b);
@@ -35,7 +34,6 @@ const produce = produceWithPatches((draft, state) => {
 
 const tgt = ftgt();
 let tree: El = { tag: null };
-
 const render = (nextTreeFn: any) => {
   const nextTree = nextTreeFn();
   const [prodTree, patches] = produce(tree, nextTree);
