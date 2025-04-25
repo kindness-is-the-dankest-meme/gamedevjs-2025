@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from "../lib/real.ts";
-import { cos, floor, sin, π } from "../lib/free.ts";
 import { grid, tapg } from "../app/grids.ts";
 import { paths } from "../app/paths.ts";
 import { rules } from "../app/rules.ts";
+import { floor } from "../lib/free.ts";
+import { useEffect, useMemo, useState } from "../lib/real.ts";
+import { Boat } from "./Boat.tsx";
 import { Pointer } from "./Pointer.tsx";
 import { Ponds } from "./Ponds.tsx";
-import { Boat } from "./Boat.tsx";
 
 type WorldProps = {
   cols: number;
