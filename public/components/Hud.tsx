@@ -1,14 +1,12 @@
-import { useState } from "../lib/real.ts";
+import { useEffect, useState } from "../lib/real.ts";
 
 export const Hud = () => {
   const [i, setI] = useState(0);
-  setI(i + 1);
 
-  return (
-    <section>
-      <header>
-        <h1>{`pond game ${i}`}</h1>
-      </header>
-    </section>
-  );
+  useEffect(() => {
+    const interval = setInterval(() => setI((p) => p + 1), 10_000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return <section title={`pond #${i}`} />;
 };
