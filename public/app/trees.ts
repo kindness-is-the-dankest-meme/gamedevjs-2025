@@ -24,6 +24,8 @@ export const twig = (n: Element, ps: Props | null | undefined): Element => (
   entries(ps).forEach(([k, v]) =>
     k.startsWith("on")
       ? n.addEventListener(k.substring(2).toLowerCase(), omap(v))
+      : v === false || String(v) === "false"
+      ? n.removeAttribute(nmap(k))
       : n.setAttribute(nmap(k), String(v))
   ), n
 );
