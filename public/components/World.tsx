@@ -47,7 +47,7 @@ export const World = ({ cols, rows, size }: WorldProps) => {
       <defs>
         {paths(size).map(([id, d]) => (
           <g id={id} key={id}>
-            {d && <path d={d} />}
+            {d && <path d={d} className="tile" />}
             <rect width={size} height={size} />
           </g>
         ))}
