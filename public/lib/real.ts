@@ -87,17 +87,40 @@ const useHook = <T>(init: () => T) => {
 type SetState<T> = (prev: T) => T;
 const isSetState = <T>(x: unknown): x is SetState<T> => typeof x === "function";
 export const useState = <T>(init: T) => {
-  console.log(currCtx);
-  const state = useHook(() => init);
-  const setState = (next: T | SetState<T>) => {
-    if (!currCtx) {
-      throw new Error("`useState` requires a component context");
-    }
+  if (!currCtx) {
+    throw new Error("`useState` requires a component context");
+  }
 
-    currCtx.hooks[currCtx.i - 1] = isSetState(next) ? next(state) : next;
+  useHook(() => init);
+  const { hooks, i } = currCtx;
+
+  const setState = (next: T | SetState<T>) => {
+    hooks[i - 1] = isSetState(next) ? next(hooks[i - 1]) : next;
+    self.dispatchEvent(
+      new MessageEvent("message", {
+        data: { type: "render" },
+      }),
+    );
   };
 
-  return [state, setState] as const;
+  return [hooks[i - 1], setState] as const;
+};
+
+type Effect = () => void | (() => void);
+export const useEffect = (effect: Effect, deps?: unknown[]) => {
+  if (!currCtx) {
+    throw new Error("`useEffect` requires a component context");
+  }
+
+  const cleanup = useHook(() => null);
+  const prev = useHook(() => null);
+  const { hooks, i } = currCtx;
+
+  if (!prev || !deps || deps.some((d, i) => d !== prev[i])) {
+    cleanup?.();
+    hooks[i - 2] = effect() || null;
+    hooks[i - 1] = deps || null;
+  }
 };
 
 export const el = (
