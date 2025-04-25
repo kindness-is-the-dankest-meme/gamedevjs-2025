@@ -12,7 +12,7 @@ import {
   keys,
   type Last,
 } from "./lib/free.ts";
-import type { El } from "./lib/real.ts";
+import { cbcks, type El } from "./lib/real.ts";
 import { Msg } from "./types.ts";
 
 type Customizer = Last<Parameters<typeof mergeWith<any, any>>>;
@@ -79,6 +79,12 @@ forEach(
         const { width, height } = msg;
         treeFn = <App width={width} height={height} />;
         render(treeFn);
+        break;
+      }
+
+      case "send": {
+        const { callback, args } = msg;
+        cbcks.get(callback)?.(...args);
         break;
       }
     }
