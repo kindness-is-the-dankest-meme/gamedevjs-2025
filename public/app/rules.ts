@@ -1,4 +1,4 @@
-import { floor, random } from "../lib/free.ts";
+import { ferr, floor, random } from "../lib/free.ts";
 import { isvt, nbors } from "./tiles.ts";
 
 const odds = (n: number) => random() < n;
@@ -24,7 +24,7 @@ const cules = (
   ];
 
   if (!(isvt(nn) && isvt(ne) && isvt(ns) && isvt(nw))) {
-    throw new Error("Invalid neighbor");
+    throw ferr("Invalid neighbor");
   }
 
   const [an, ae, as, aw] = [
