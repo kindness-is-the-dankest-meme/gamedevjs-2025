@@ -1,9 +1,10 @@
 import { entries, fcev } from "../lib/free.ts";
 import type { ChE, El, Props } from "../lib/real.ts";
 import { svgs } from "./constants.ts";
-import { amap, tapl } from "./utils.ts";
+import { amap } from "./utils.ts";
 
 export const nmap = amap({
+  className: "class",
   htmlFor: "for",
   key: "data-key",
 });
