@@ -15,6 +15,7 @@ export const {
   entries,
   fromEntries,
   hasOwn,
+  is,
   keys,
 } = Object;
 export const {
@@ -37,10 +38,12 @@ export const fmev: F<typeof MessageEvent> = (type, init) =>
 export const ferr: F<typeof Error> = (message, options) =>
   new Error(message, options);
 
-// TODO: figure out how to make the type work
+// TODO: figure out how to make these type work
 export const fmap /* : F<typeof Map> */ = <K, V>(
   iterable?: Iterable<readonly [K, V]> | null,
 ) => new Map<K, V>(iterable);
+export const fset /* : F<typeof Set> */ = <T>(iterable?: Iterable<T> | null) =>
+  new Set<T>(iterable);
 
 export const fromEvent = async function* <E extends Event = Event>(
   target: EventTarget,
