@@ -70,3 +70,9 @@ path.tile,
 path.pointer {
   fill: white;
 }
+
+path.pointer {
+  stroke: #444;
+  stroke-width: 2px;
+  stroke-linejoin: round;
+}
