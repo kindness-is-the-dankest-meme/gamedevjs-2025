@@ -19,7 +19,7 @@ const genp = (cols: number, rows: number) =>
 export const World = ({ cols, rows, size }: WorldProps) => {
   const ts = useMemo(() => tapg(genp(cols, rows)), [cols, rows]);
 
-  const [pointer, setPointer] = useState(true);
+  const [pointer, setPointer] = useState(false);
   const [x, setX] = useState((cols * size) / 2 + size);
   const [y, setY] = useState((rows * size) / 2);
   const [r, setR] = useState(0);
