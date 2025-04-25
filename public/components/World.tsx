@@ -37,7 +37,8 @@ export const World = ({ cols, rows, size }: WorldProps) => {
       width={`${cols * size}px`}
       height={`${rows * size}px`}
       fill="none"
-      onPointerEnter={() => setPointer(true)}
+      onPointerEnter={({ pointerType }: any) =>
+        setPointer(pointerType === "mouse")}
       onPointerLeave={() => setPointer(false)}
       onPointerMove={({ x, y }: any) => {
         setX(x);

@@ -10,9 +10,9 @@ export const nmap = amap({
 });
 
 // TODO: serialize some other event properties
-const omap = (n: string) => ({ type, x, y }: any) =>
+const omap = (n: string) => ({ type, x, y, pointerType }: any) =>
   globalThis.dispatchEvent(
-    fcev("rpc", { detail: { cbid: n, args: [{ type, x, y }] } }),
+    fcev("rpc", { detail: { cbid: n, args: [{ type, x, y, pointerType }] } }),
   );
 
 export const spur = (n: Node, cs: ChE[] | undefined): Node => (
