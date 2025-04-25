@@ -6,14 +6,14 @@ import { z } from "https://esm.sh/zod@3.24.3";
 import { App } from "./components/App.tsx";
 import {
   fcev,
-  fevt,
   forEach,
   fromEvent,
+  ftgt,
   isArray,
   keys,
   type Last,
 } from "./lib/free.ts";
-import type { ChE, El } from "./lib/real.ts";
+import type { El } from "./lib/real.ts";
 
 type Customizer = Last<Parameters<typeof mergeWith<any, any>>>;
 
@@ -48,7 +48,7 @@ const produce = produceWithPatches((draft, state) => {
   mergeWith(draft, state, customizer);
 });
 
-const evt = fevt();
+const evt = ftgt();
 let tree: El = { tag: null };
 
 const render = (nextTreeFn: any) => {
