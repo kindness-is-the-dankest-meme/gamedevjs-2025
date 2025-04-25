@@ -20,7 +20,6 @@ html,
 body,
 main {
   background: hsl(100, 40%, 60%);
-  color: white;
 }
 
 main {
@@ -38,7 +37,9 @@ section {
 
 body {
   margin: 0;
+  color: white;
   overflow: hidden;
+  cursor: none;
 }
 
 section {
