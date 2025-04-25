@@ -1,21 +1,10 @@
 import get from "https://esm.sh/lodash-es@4.17.21/get.js";
-import { z } from "https://esm.sh/zod@3.24.3";
+import type { z } from "https://esm.sh/zod@3.24.3";
 import { grow, nmap } from "./app/trees.ts";
 import { isArray } from "./lib/free.ts";
+import type { Patch } from "./types.ts";
 
 declare const m: HTMLElement;
-
-export const Patch = z.object({
-  op: z.enum(["add", "remove", "replace"]),
-  path: z.array(
-    z.union([
-      z.enum(["tag", "props", "children"]),
-      z.number(),
-      z.string(),
-    ]),
-  ),
-  value: z.any(),
-});
 
 export const patch = ({ op, path, value }: z.infer<typeof Patch>): void => {
   switch (op) {
