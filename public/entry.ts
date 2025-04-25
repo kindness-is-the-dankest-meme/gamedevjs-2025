@@ -1,4 +1,12 @@
-import { fevt, forEach, fromEvent, fwkr, merge } from "./lib/free.ts";
+import {
+  fevt,
+  forEach,
+  fromEvent,
+  fset,
+  fwkr,
+  keys,
+  merge,
+} from "./lib/free.ts";
 import { patch } from "./patch.ts";
 import { GlobalThisEvent, WorkerEvent } from "./types.ts";
 
@@ -33,8 +41,14 @@ forEach(
   },
 );
 
+const keysDown = fset<string>();
 forEach(
-  merge([fromEvent(globalThis, "resize"), fromEvent(globalThis, "rpc")]),
+  merge([
+    fromEvent(globalThis, "resize"),
+    fromEvent(globalThis, "keydown"),
+    fromEvent(globalThis, "keyup"),
+    fromEvent(globalThis, "rpc"),
+  ]),
   (e) => {
     const { success, data: event, error } = GlobalThisEvent.safeParse(e);
     if (!success) {
@@ -54,6 +68,21 @@ forEach(
         break;
       }
 
+      case "keydown": {
+        if (!keysDown.has(event.key)) {
+          keysDown.add(event.key);
+          w.postMessage({ type: "keys", keys: keysDown.values().toArray() });
+        }
+        break;
+      }
+
+      case "keyup": {
+        if (keysDown.delete(event.key)) {
+          w.postMessage({ type: "keys", keys: keysDown.values().toArray() });
+        }
+        break;
+      }
+
       case "rpc": {
         /**
          * n.b. `event.detail` an object with a `cbid` string (path to the
@@ -62,6 +91,11 @@ forEach(
          *
          * @see ./types.ts
          * @see ./worky.ts
+         *
+         * ... also this event dispatching is set up by `twig` when adding
+         * attributes to DOM nodes
+         *
+         * @see ./app/trees.ts
          */
         w.postMessage({ type, ...event.detail });
         break;
@@ -72,5 +106,3 @@ forEach(
 
 const dispatchResize = () => globalThis.dispatchEvent(fevt("resize"));
 dispatchResize();
-
-forEach(fromEvent(globalThis, "keyup"), (e) => console.log(e));

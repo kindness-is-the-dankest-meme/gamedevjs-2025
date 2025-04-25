@@ -2,7 +2,7 @@ import { enablePatches, produceWithPatches } from "https://esm.sh/immer@10.1.1";
 import isEqual from "https://esm.sh/lodash-es@4.17.21/isEqual.js";
 import isPlainObject from "https://esm.sh/lodash-es@4.17.21/isPlainObject.js";
 import mergeWith from "https://esm.sh/lodash-es@4.17.21/mergeWith.js";
-import { App } from "./components/App.tsx";
+import { App, store } from "./components/App.tsx";
 import {
   fcev,
   forEach,
@@ -12,7 +12,7 @@ import {
   keys,
   type Last,
 } from "./lib/free.ts";
-import { cbcks, type El } from "./lib/real.ts";
+import { cbs, type El } from "./lib/real.ts";
 import { Msg } from "./types.ts";
 
 type Customizer = Last<Parameters<typeof mergeWith<any, any>>>;
@@ -56,7 +56,9 @@ forEach(
   ({ detail }) => self.postMessage(detail),
 );
 
-let treeFn: any;
+const treeFn = <App />;
+render(treeFn);
+
 forEach(
   fromEvent<MessageEvent>(self, "message"),
   ({ data }) => {
@@ -69,20 +71,32 @@ forEach(
 
     switch (msg.type) {
       case "render": {
-        treeFn && render(treeFn);
+        render(treeFn);
         break;
       }
 
       case "resize": {
         const { width, height } = msg;
-        treeFn = <App width={width} height={height} />;
-        render(treeFn);
+        store.set((prev) => ({
+          ...prev,
+          width,
+          height,
+        }));
+        break;
+      }
+
+      case "keys": {
+        const { keys } = msg;
+        store.set((prev) => ({
+          ...prev,
+          keys,
+        }));
         break;
       }
 
       case "rpc": {
         const { cbid, args } = msg;
-        cbcks.get(cbid)?.(...args);
+        cbs.get(cbid)?.(...args);
         break;
       }
     }
