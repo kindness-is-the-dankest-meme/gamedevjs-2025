@@ -13,15 +13,24 @@ import {
   keys,
   type Last,
 } from "./lib/free.ts";
-import type { El } from "./lib/real.ts";
+import type { ChE, El } from "./lib/real.ts";
 
 type Customizer = Last<Parameters<typeof mergeWith<any, any>>>;
+
+const RenderEvent = z.object({
+  type: z.literal("render"),
+});
 
 const ResizeEvent = z.object({
   type: z.literal("resize"),
   width: z.number(),
   height: z.number(),
 });
+
+const Event = z.discriminatedUnion("type", [
+  RenderEvent,
+  ResizeEvent,
+]);
 
 const customizer: Customizer = (a, b, k) => {
   if (k === "props" && isPlainObject(a)) {
@@ -64,19 +73,29 @@ forEach(
   ({ detail }) => self.postMessage(detail),
 );
 
-self.addEventListener(
-  "message",
+let treeFn: any;
+forEach(
+  fromEvent<MessageEvent>(self, "message"),
   ({ data }) => {
-    const { success, data: event, error } = ResizeEvent.safeParse(data);
+    const { success, data: event, error } = Event.safeParse(data);
     if (!success) {
       console.error(error);
       console.info({ data });
       return;
     }
 
-    const { type, width, height } = event;
-    if (type === "resize") {
-      render(<App width={width} height={height} />);
+    switch (event.type) {
+      case "render": {
+        treeFn && render(treeFn);
+        break;
+      }
+
+      case "resize": {
+        const { width, height } = event;
+        treeFn = <App width={width} height={height} />;
+        render(treeFn);
+        break;
+      }
     }
   },
 );
