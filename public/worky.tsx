@@ -4,21 +4,33 @@ import isPlainObject from "https://esm.sh/lodash-es@4.17.21/isPlainObject.js";
 import mergeWith from "https://esm.sh/lodash-es@4.17.21/mergeWith.js";
 import { z } from "https://esm.sh/zod@3.24.3";
 import { App } from "./components/App.tsx";
-import type { El } from "./lib/real.ts";
+import {
+  fcev,
+  fevt,
+  forEach,
+  fromEvent,
+  isArray,
+  keys,
+  type Last,
+} from "./lib/free.ts";
+import type { ChE, El } from "./lib/real.ts";
 
-type Last<T extends any[]> = T extends [...infer _, infer L] ? L : never;
 type Customizer = Last<Parameters<typeof mergeWith<any, any>>>;
-type F<T> = T extends new (...args: infer A) => infer R ? (...args: A) => R
-  : never;
 
-const { isArray } = Array;
-const { keys } = Object;
+const RenderEvent = z.object({
+  type: z.literal("render"),
+});
 
 const ResizeEvent = z.object({
   type: z.literal("resize"),
   width: z.number(),
   height: z.number(),
 });
+
+const Event = z.discriminatedUnion("type", [
+  RenderEvent,
+  ResizeEvent,
+]);
 
 const customizer: Customizer = (a, b, k) => {
   if (k === "props" && isPlainObject(a)) {
@@ -36,17 +48,15 @@ const produce = produceWithPatches((draft, state) => {
   mergeWith(draft, state, customizer);
 });
 
-const fevt: F<typeof EventTarget> = () => new EventTarget();
-const fcev: F<typeof CustomEvent> = (type, init) => new CustomEvent(type, init);
-
 const evt = fevt();
 let tree: El = { tag: null };
 
-const render = (nextTree: any) => {
+const render = (nextTreeFn: any) => {
+  const nextTree = nextTreeFn();
   const [prodTree, patches] = produce(tree, nextTree);
 
   if (!isEqual(nextTree, prodTree)) {
-    console.log({
+    console.error("The produced tree did not match the expected tree", {
       nextTree,
       prodTree,
     });
@@ -58,61 +68,34 @@ const render = (nextTree: any) => {
   );
 };
 
-const fromEvent = async function* <E extends Event>(
-  target: EventTarget,
-  type: string,
-): AsyncGenerator<E> {
-  let { promise, resolve } = Promise.withResolvers<void>();
-
-  const events = new Set<E>(),
-    listener = (event: Event) => {
-      events.add(event as E);
-      resolve();
-
-      ({ promise, resolve } = Promise.withResolvers<void>());
-    };
-
-  try {
-    target.addEventListener(type, listener);
-
-    while (true) {
-      await promise;
-      yield* events.values();
-      events.clear();
-    }
-  } finally {
-    target.removeEventListener(type, listener);
-  }
-};
-
-const forEach = async <E extends Event>(
-  eventStream: AsyncGenerator<E>,
-  listener: (event: E, index: number) => void,
-) => {
-  let i = 0;
-  for await (const event of eventStream) {
-    listener(event, i++);
-  }
-};
-
 forEach(
   fromEvent<CustomEvent>(evt, "patch"),
   ({ detail }) => self.postMessage(detail),
 );
 
-self.addEventListener(
-  "message",
+let treeFn: any;
+forEach(
+  fromEvent<MessageEvent>(self, "message"),
   ({ data }) => {
-    const { success, data: event, error } = ResizeEvent.safeParse(data);
+    const { success, data: event, error } = Event.safeParse(data);
     if (!success) {
       console.error(error);
       console.info({ data });
       return;
     }
 
-    const { type, width, height } = event;
-    if (type === "resize") {
-      render(<App width={width} height={height} />);
+    switch (event.type) {
+      case "render": {
+        treeFn && render(treeFn);
+        break;
+      }
+
+      case "resize": {
+        const { width, height } = event;
+        treeFn = <App width={width} height={height} />;
+        render(treeFn);
+        break;
+      }
     }
   },
 );

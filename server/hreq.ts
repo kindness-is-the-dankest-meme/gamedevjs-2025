@@ -12,9 +12,7 @@ import {
   parse,
   relative,
 } from "jsr:@std/path";
-
-type F<T> = T extends new (...args: infer A) => infer R ? (...args: A) => R
-  : never;
+import type { F } from "../public/lib/free.ts";
 
 const prod = Deno.env.has("DENO_DEPLOYMENT_ID");
 

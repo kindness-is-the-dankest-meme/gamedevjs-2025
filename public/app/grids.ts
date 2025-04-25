@@ -1,6 +1,5 @@
+import { from } from "../lib/free.ts";
 import { tapl } from "./utils.ts";
-
-const { from } = Array;
 
 const outl = (cols: number, rows: number) => (i: number, j: number) =>
   i === 0 || i === rows - 1 || j === 0 || j === cols - 1 ? "∙" : "";

@@ -45,6 +45,10 @@ section {
   top: 0;
   left: 0;
   width: 100%;
+  pointer-events: none;
+
+  /* TODO: figure out how to avoid selecting when you don't mean to, but allow selecting if you want */
+  user-select: none;
 }
 
 menu {
