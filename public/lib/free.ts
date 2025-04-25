@@ -4,7 +4,7 @@ export type F<T> = T extends new (...args: infer A) => infer R
 
 export type Last<T extends any[]> = T extends [...infer _, infer L] ? L : never;
 
-export const { ceil, floor, random, PI: π } = Math;
+export const { ceil, cos, floor, random, sin, PI: π } = Math;
 export const { from, isArray } = Array;
 export const {
   assign,
