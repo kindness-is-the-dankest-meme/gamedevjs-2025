@@ -1,6 +1,6 @@
 import { fevt, forEach, fromEvent, fwkr, merge } from "./lib/free.ts";
 import { patch } from "./patch.ts";
-import { GlobalThisEvent, InnerSize, WorkerEvent } from "./types.ts";
+import { GlobalThisEvent, WorkerEvent } from "./types.ts";
 
 declare const m: HTMLElement;
 const w = fwkr("./worky.ts", { type: "module" });
