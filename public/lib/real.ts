@@ -27,14 +27,7 @@ const _tiss = (t: Tag | null): t is TagN => typeof t === "string";
 const tisf = (t: Tag | null): t is TagF => typeof t === "function";
 const cisf = (c: Ch): c is ChF => typeof c === "function";
 
-const ch = (c: Ch, path: Path): ChE => {
-  if (cisf(c)) {
-    return c(path);
-  }
-
-  return c;
-};
-
+const ch = (c: Ch, path: Path): ChE => cisf(c) ? c(path) : c;
 const ci = (path: Path) => (c: Ch, i: number) =>
   ch(c, [...path, "children", i]);
 
@@ -121,6 +114,25 @@ export const useEffect = (effect: Effect, deps?: unknown[]) => {
     hooks[i - 2] = effect() || null;
     hooks[i - 1] = deps || null;
   }
+};
+
+export const useMemo = <T>(compute: () => T, deps?: unknown[]) => {
+  if (!currCtx) {
+    throw ferr("`useMemo` requires a component context");
+  }
+
+  const memo = useHook(() => null);
+  const prev = useHook(() => null);
+  const { hooks, i } = currCtx;
+
+  if (!prev || !deps || deps.some((d, i) => d !== prev[i])) {
+    const next = compute();
+    hooks[i - 2] = next;
+    hooks[i - 1] = deps || null;
+    return next;
+  }
+
+  return memo;
 };
 
 export const el = (
