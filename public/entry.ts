@@ -1,6 +1,6 @@
 import { fevt, forEach, fromEvent, fwkr, merge } from "./lib/free.ts";
 import { patch } from "./patch.ts";
-import { Event, InnerSize } from "./types.ts";
+import { GlobalThisEvent, InnerSize, WorkerEvent } from "./types.ts";
 
 declare const m: HTMLElement;
 const w = fwkr("./worky.ts", { type: "module" });
@@ -12,7 +12,7 @@ forEach(
     fromEvent(w, "message"),
   ]),
   (e) => {
-    const { success, data: event, error } = Event.safeParse(e);
+    const { success, data: event, error } = WorkerEvent.safeParse(e);
     if (!success) {
       console.error(error);
       console.info({ event: e });
@@ -33,10 +33,30 @@ forEach(
   },
 );
 
-forEach(fromEvent(globalThis, "resize"), ({ target, type }) => {
-  const { width, height } = InnerSize.parse(target);
-  w.postMessage({ type, width, height });
-});
+forEach(
+  merge([fromEvent(globalThis, "resize"), fromEvent(globalThis, "send")]),
+  (e) => {
+    const { success, data: event, error } = GlobalThisEvent.safeParse(e);
+    if (!success) {
+      console.error(error);
+      console.info({ event: e });
+      return;
+    }
+
+    const { type } = event;
+    switch (type) {
+      case "resize": {
+        w.postMessage({ type, ...event.target });
+        break;
+      }
+
+      case "send": {
+        w.postMessage({ type, ...event.detail });
+        break;
+      }
+    }
+  },
+);
 
 const dispatchResize = () => globalThis.dispatchEvent(fevt("resize"));
 forEach(fromEvent(m, "click"), dispatchResize);
