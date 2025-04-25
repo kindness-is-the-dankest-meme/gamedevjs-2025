@@ -1,12 +1,11 @@
 import get from "https://esm.sh/lodash-es@4.17.21/get.js";
-import type { z } from "https://esm.sh/zod@3.24.3";
 import { grow, nmap, twig } from "./app/trees.ts";
 import { isArray } from "./lib/free.ts";
 import type { Patch } from "./types.ts";
 
 declare const m: HTMLElement;
 
-export const patch = ({ op, path, value }: z.infer<typeof Patch>): void => {
+export const patch = ({ op, path, value }: Patch): void => {
   switch (op) {
     case "add": {
       if (path.includes("props")) {

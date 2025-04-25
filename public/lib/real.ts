@@ -143,9 +143,9 @@ const post = (props: Props, tid: string): Props =>
   fromEntries(
     entries(props).map(([k, v]) => {
       if (k.startsWith("on") && typeof v === "function") {
-        const cid = `${tid}.${k}`;
-        cbcks.set(cid, v);
-        return [k, cid];
+        const cbid = `${tid}.${k}`;
+        cbcks.set(cbid, v);
+        return [k, cbid];
       }
 
       return [k, v];

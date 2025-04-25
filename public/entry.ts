@@ -34,7 +34,7 @@ forEach(
 );
 
 forEach(
-  merge([fromEvent(globalThis, "resize"), fromEvent(globalThis, "send")]),
+  merge([fromEvent(globalThis, "resize"), fromEvent(globalThis, "rpc")]),
   (e) => {
     const { success, data: event, error } = GlobalThisEvent.safeParse(e);
     if (!success) {
@@ -54,11 +54,11 @@ forEach(
         break;
       }
 
-      case "send": {
+      case "rpc": {
         /**
-         * n.b. `event.detail` an object with a `callback` string (path to the
+         * n.b. `event.detail` an object with a `cbid` string (path to the
          * callback in `cbcks`) and an `args` tuple that's just the serialized
-         * event object
+         * event object (e.g. `{ type: "pointermove", x: 0, y: 0 }`)
          *
          * @see ./types.ts
          * @see ./worky.ts
@@ -71,5 +71,6 @@ forEach(
 );
 
 const dispatchResize = () => globalThis.dispatchEvent(fevt("resize"));
-forEach(fromEvent(m, "click"), dispatchResize);
 dispatchResize();
+
+forEach(fromEvent(globalThis, "keyup"), (e) => console.log(e));

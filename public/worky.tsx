@@ -80,9 +80,9 @@ forEach(
         break;
       }
 
-      case "send": {
-        const { callback, args } = msg;
-        cbcks.get(callback)?.(...args);
+      case "rpc": {
+        const { cbid, args } = msg;
+        cbcks.get(cbid)?.(...args);
         break;
       }
     }

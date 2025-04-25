@@ -12,7 +12,7 @@ export const nmap = amap({
 // TODO: serialize some other event properties
 const omap = (n: string) => ({ type, x, y }: any) =>
   globalThis.dispatchEvent(
-    fcev("send", { detail: { callback: n, args: [{ type, x, y }] } }),
+    fcev("rpc", { detail: { cbid: n, args: [{ type, x, y }] } }),
   );
 
 export const spur = (n: Node, cs: ChE[] | undefined): Node => (
