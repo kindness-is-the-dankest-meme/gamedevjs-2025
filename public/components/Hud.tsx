@@ -1,6 +1,10 @@
 import { useEffect, useState } from "../lib/real.ts";
 
-export const Hud = () => {
+type HudProps = {
+  keys: string[];
+};
+
+export const Hud = ({ keys }: HudProps) => {
   const [i, setI] = useState(0);
 
   useEffect(() => {
@@ -8,5 +12,30 @@ export const Hud = () => {
     return () => clearInterval(interval);
   }, []);
 
-  return <section title={`pond #${i}`} />;
+  return (
+    <section title={`pond #${i}`}>
+      <menu>
+        <li>
+          <button type="button" name="n" disabled={keys.includes("w")}>
+            &#11014;
+          </button>
+        </li>
+        <li>
+          <button type="button" name="e" disabled={keys.includes("d")}>
+            &#11157;
+          </button>
+        </li>
+        <li>
+          <button type="button" name="s" disabled={keys.includes("s")}>
+            &#11015;
+          </button>
+        </li>
+        <li>
+          <button type="button" name="w" disabled={keys.includes("a")}>
+            &#11013;
+          </button>
+        </li>
+      </menu>
+    </section>
+  );
 };

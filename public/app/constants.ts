@@ -4,7 +4,7 @@ export const svgs: string[] = [
   // "animateMotion",
   // "animateTransform",
   // "circle",
-  // "clipPath",
+  "clipPath",
   "defs",
   // "desc",
   // "ellipse",

@@ -1,19 +1,33 @@
-import { entries } from "../lib/free.ts";
+import { entries, fcev } from "../lib/free.ts";
 import type { ChE, El, Props } from "../lib/real.ts";
 import { svgs } from "./constants.ts";
 import { amap } from "./utils.ts";
 
 export const nmap = amap({
+  className: "class",
   htmlFor: "for",
   key: "data-key",
 });
+
+// TODO: serialize some other event properties
+const omap = (n: string) => ({ type, x, y }: any) =>
+  globalThis.dispatchEvent(
+    fcev("rpc", { detail: { cbid: n, args: [{ type, x, y }] } }),
+  );
 
 export const spur = (n: Node, cs: ChE[] | undefined): Node => (
   cs && cs.forEach((c) => n.appendChild(grow(c))), n
 );
 
 export const twig = (n: Element, ps: Props | null | undefined): Element => (
-  ps && entries(ps).forEach(([k, v]) => n.setAttribute(nmap(k), String(v))), n
+  ps &&
+  entries(ps).forEach(([k, v]) =>
+    k.startsWith("on")
+      ? n.addEventListener(k.substring(2).toLowerCase(), omap(v))
+      : v === false || String(v) === "false"
+      ? n.removeAttribute(nmap(k))
+      : n.setAttribute(nmap(k), String(v))
+  ), n
 );
 
 export const limb = (tag: string): Element =>

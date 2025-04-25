@@ -12,18 +12,16 @@ import {
   parse,
   relative,
 } from "jsr:@std/path";
-import type { F } from "../public/lib/free.ts";
+import { fres, furl } from "../public/lib/free.ts";
 
 const prod = Deno.env.has("DENO_DEPLOYMENT_ID");
 
-const fres: F<typeof Response> = (body, init) => new Response(body, init);
 const stat = (code: StatusCode) =>
   fres(`${code} ${STATUS_TEXT[code]}`, {
     status: code,
     statusText: STATUS_TEXT[code],
   });
 
-const furl: F<typeof URL> = (url, base) => new URL(url, base);
 const walk = async function* (
   dir: string,
   base: string,

@@ -1,134 +1,108 @@
-import get from "https://esm.sh/lodash-es@4.17.21/get.js";
-import { z } from "https://esm.sh/zod@3.24.3";
-import { caf, forEach, fromEvent, isArray, raf } from "./lib/free.ts";
-import { grow, nmap } from "./app/trees.ts";
+import {
+  fevt,
+  forEach,
+  fromEvent,
+  fset,
+  fwkr,
+  keys,
+  merge,
+} from "./lib/free.ts";
+import { patch } from "./patch.ts";
+import { GlobalThisEvent, WorkerEvent } from "./types.ts";
 
 declare const m: HTMLElement;
+const w = fwkr("./worky.ts", { type: "module" });
 
-let frameId = 0;
-
-const Patch = z.object({
-  op: z.enum(["add", "remove", "replace"]),
-  path: z.array(
-    z.union([
-      z.enum(["tag", "props", "children"]),
-      z.number(),
-      z.string(),
-    ]),
-  ),
-  value: z.any(),
-});
-
-const worky = new Worker("./worky.ts", { type: "module" });
-worky.addEventListener("error", (e) => console.error(e));
-worky.addEventListener("messageerror", (e) => console.error(e));
-worky.addEventListener(
-  "message",
-  ({ data }) => {
-    caf(frameId);
-    frameId = raf(() => {});
-
-    const { success, data: patch, error } = Patch.safeParse(data);
+forEach(
+  merge([
+    fromEvent(w, "error"),
+    fromEvent(w, "messageerror"),
+    fromEvent(w, "message"),
+  ]),
+  (e) => {
+    const { success, data: event, error } = WorkerEvent.safeParse(e);
     if (!success) {
       console.error(error);
-      console.info({ data });
+      console.info({ event: e });
       return;
     }
 
-    const { op, path, value } = patch;
-    switch (op) {
-      case "add": {
-        if (path.includes("props")) {
-          get(m, path.slice(0, path.indexOf("props")))
-            ?.setAttribute(
-              nmap(path.at(-1)),
-              String(value),
-            );
-
-          return;
-        }
-
-        if (path.includes("children")) {
-          get(m, path.slice(0, path.lastIndexOf("children")), m).appendChild(
-            grow(
-              isArray(value) ? { tag: null, children: value } : value,
-            ),
-          );
-
-          return;
-        }
-
-        console.log(patch);
+    switch (event.type) {
+      case "error":
+      case "messageerror": {
+        console.error(event);
         break;
       }
 
-      case "replace": {
-        if (path.includes("props")) {
-          get(m, path.slice(0, path.indexOf("props")))
-            ?.setAttribute(
-              nmap(path.at(-1)),
-              String(value),
-            );
-
-          return;
-        }
-
-        if (path.includes("children")) {
-          get(m, path.slice(0, path.lastIndexOf("children")), m)
-            .replaceChildren(
-              grow(
-                isArray(value) ? { tag: null, children: value } : value,
-              ),
-            );
-
-          return;
-        }
-
-        console.log(patch);
-        break;
-      }
-
-      case "remove": {
-        if (path.includes("props")) {
-          get(m, path.slice(0, path.indexOf("props")))
-            ?.removeAttribute(
-              nmap(path.at(-1)),
-            );
-
-          return;
-        }
-
-        if (path.includes("children")) {
-          get(m, path)?.remove();
-          return;
-        }
-
-        console.log(patch);
-        break;
-      }
-
-      default: {
-        console.log(patch);
+      case "message": {
+        patch(event.data);
       }
     }
   },
 );
 
-const InnerSize = z
-  .object({
-    innerWidth: z.number(),
-    innerHeight: z.number(),
-  })
-  .transform(({ innerWidth: width, innerHeight: height }) => ({
-    width,
-    height,
-  }));
+const keysDown = fset<string>();
+forEach(
+  merge([
+    fromEvent(globalThis, "resize"),
+    fromEvent(globalThis, "keydown"),
+    fromEvent(globalThis, "keyup"),
+    fromEvent(globalThis, "rpc"),
+  ]),
+  (e) => {
+    const { success, data: event, error } = GlobalThisEvent.safeParse(e);
+    if (!success) {
+      console.error(error);
+      console.info({ event: e });
+      return;
+    }
 
-forEach(fromEvent(globalThis, "resize"), ({ target, type }) => {
-  const { width, height } = InnerSize.parse(target);
-  worky.postMessage({ type, width, height });
-});
+    const { type } = event;
+    switch (type) {
+      case "resize": {
+        /**
+         * n.b. `event.target` is a transformed `InnerSize` object
+         * @see ./types.ts
+         */
+        w.postMessage({ type, ...event.target });
+        break;
+      }
 
-const dispatchResize = () => globalThis.dispatchEvent(new Event("resize"));
-forEach(fromEvent(m, "click"), dispatchResize);
+      case "keydown": {
+        if (!keysDown.has(event.key)) {
+          keysDown.add(event.key);
+          w.postMessage({ type: "keys", keys: keysDown.values().toArray() });
+        }
+        break;
+      }
+
+      case "keyup": {
+        if (keysDown.delete(event.key)) {
+          w.postMessage({ type: "keys", keys: keysDown.values().toArray() });
+        }
+        break;
+      }
+
+      case "rpc": {
+        /**
+         * n.b. `event.detail` an object with a `cbid` string (path to the
+         * callback in `cbcks`) and an `args` tuple that's just the serialized
+         * event object (e.g. `{ type: "pointermove", x: 0, y: 0 }`)
+         *
+         * @see ./types.ts
+         * @see ./worky.ts
+         *
+         * ... also this event dispatching is set up by `twig` when adding
+         * attributes to DOM nodes
+         *
+         * @see ./app/trees.ts
+         */
+        w.postMessage({ type, ...event.detail });
+        break;
+      }
+    }
+  },
+);
+
+const dispatchResize = () => globalThis.dispatchEvent(fevt("resize"));
 dispatchResize();
