@@ -97,7 +97,7 @@ const swco: Options = {
   module: {
     type: "es6",
   },
-  minify: prod,
+  minify: false,
   isModule: true,
 };
 const rile = (path: URL) =>
