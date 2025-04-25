@@ -22,29 +22,35 @@ export const InnerSize = z
     height,
   }));
 
-export const ErrorEvent = z.object({
-  type: z.literal("error"),
+export const ResizeEvent = z.object({
+  type: z.literal("resize"),
+  target: InnerSize,
 });
-
-export const MessageErrorEvent = z.object({
-  type: z.literal("messageerror"),
+export const SendEvent = z.object({
+  type: z.literal("send"),
+  detail: z.object({
+    callback: z.string(),
+    args: z.tuple([z.any()]),
+  }),
 });
+export const GlobalThisEvent = z.discriminatedUnion("type", [
+  ResizeEvent,
+  SendEvent,
+]);
 
+export const ErrorEvent = z.object({ type: z.literal("error") });
+export const MessageErrorEvent = z.object({ type: z.literal("messageerror") });
 export const MessageEvent = z.object({
   type: z.literal("message"),
   data: Patch,
 });
-
-export const Event = z.discriminatedUnion("type", [
+export const WorkerEvent = z.discriminatedUnion("type", [
   ErrorEvent,
   MessageErrorEvent,
   MessageEvent,
 ]);
 
-export const RenderMsg = z.object({
-  type: z.literal("render"),
-});
-
+export const RenderMsg = z.object({ type: z.literal("render") });
 export const ResizeMsg = z.object({
   type: z.literal("resize"),
   /**
@@ -54,8 +60,14 @@ export const ResizeMsg = z.object({
   width: z.number(),
   height: z.number(),
 });
+export const SendMsg = z.object({
+  type: z.literal("send"),
+  callback: z.string(),
+  args: z.tuple([z.any()]),
+});
 
 export const Msg = z.discriminatedUnion("type", [
   RenderMsg,
   ResizeMsg,
+  SendMsg,
 ]);
