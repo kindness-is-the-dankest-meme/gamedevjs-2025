@@ -24,7 +24,10 @@ export const Hud = () => {
           onMouseUp={() =>
             store.set((prev) =>
               prev.keys.includes("arrowup")
-                ? ({ ...prev, keys: prev.keys.filter((k) => k !== "arrowup") })
+                ? ({
+                  ...prev,
+                  keys: prev.keys.filter((k) => k !== "arrowup"),
+                })
                 : prev
             )}
         >

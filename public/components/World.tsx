@@ -38,7 +38,12 @@ export const World = () => {
       const x = j * size + size / 2;
       const y = i * size + size / 2;
 
-      return ({ ...prev, ts, cx: x, px: x, cy: y, py: y });
+      return ({
+        ...prev,
+        ts,
+        x,
+        y,
+      });
     });
   }, [cols, rows]);
 
