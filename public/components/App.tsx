@@ -69,7 +69,7 @@ const gkeys = () => {
 };
 
 export const App = () => {
-  const { size, width, height, keys } = useStore(selectSwhk);
+  const { size, width, height } = useStore(selectSwhk);
   useFrame(gkeys);
 
   return (
@@ -81,7 +81,7 @@ export const App = () => {
           size={size}
         />
         <figcaption>
-          <Hud keys={keys} />
+          <Hud />
         </figcaption>
       </figure>
     </>
