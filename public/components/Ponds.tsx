@@ -1,17 +1,14 @@
-import { selectSize } from "../app/selectors.ts";
+import { selectSize, selectTs } from "../app/selectors.ts";
 import { useStore } from "../app/store.ts";
 
-type PondsProps = {
-  ts: string[][];
-};
-
-export const Ponds = ({ ts }: PondsProps) => {
+export const Ponds = () => {
   const size = useStore(selectSize);
+  const ts = useStore(selectTs);
 
   return (
     <g>
-      {ts.map((r, i) =>
-        r.map((c, j) => (
+      {ts.map((r: string[], i: number) =>
+        r.map((c: string, j: number) => (
           <use
             key={`${j}:${i}`}
             className="tile"

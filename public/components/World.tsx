@@ -2,8 +2,8 @@ import { grid, tapg } from "../app/grids.ts";
 import { paths } from "../app/paths.ts";
 import { rules } from "../app/rules.ts";
 import { selectCols, selectRows, selectSize } from "../app/selectors.ts";
-import { useStore } from "../app/store.ts";
-import { useMemo } from "../lib/estate.ts";
+import { store, useStore } from "../app/store.ts";
+import { useEffect, useMemo } from "../lib/estate.ts";
 import { Boat } from "./Boat.tsx";
 import { Ponds } from "./Ponds.tsx";
 
@@ -15,7 +15,9 @@ export const World = () => {
   const cols = useStore(selectCols);
   const rows = useStore(selectRows);
 
-  const ts = useMemo(() => tapg(genp(cols, rows)), [cols, rows]);
+  useEffect(() => {
+    store.set((prev) => ({ ...prev, ts: tapg(genp(cols, rows)) }));
+  }, [cols, rows]);
 
   return (
     <svg
@@ -31,7 +33,7 @@ export const World = () => {
           </g>
         ))}
       </defs>
-      <Ponds ts={ts} />
+      <Ponds />
       <Boat />
     </svg>
   );
