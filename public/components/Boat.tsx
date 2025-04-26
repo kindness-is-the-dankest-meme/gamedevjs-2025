@@ -1,15 +1,14 @@
-import { floor, rtod } from "../lib/free.ts";
+import { type State, useStore } from "../app/store.ts";
+import { selectCols, selectRows, selectSize } from "../app/selectors.ts";
+import { floor, rtod, π } from "../lib/free.ts";
 
-type BoatProps = {
-  x: number;
-  y: number;
-  r: number;
-  s: number;
-};
+const selectS = ({ size }: State) => floor(size * 0.8);
+const selectX = (state: State) => selectCols(state) * selectSize(state) / 2;
+const selectY = (state: State) => selectRows(state) * selectSize(state) / 2;
 
-export const Boat = ({ x, y, r, s }: BoatProps) => {
+export const Boat = () => {
   /**
-   * `s` is 80% of the `size` declared in `./App.tsx`. If `size` is 40:
+   * `s` is 80% of `size` (defined in `../app/store.ts`), if `size` is 40:
    *
    * | variable | value |
    * | -------- | ----- |
@@ -26,14 +25,19 @@ export const Boat = ({ x, y, r, s }: BoatProps) => {
    * and "sixty-fourth size" as they would only have been used in the calulation
    * for their next sizes
    *
-   * @see ./App.tsx
-   * @see ./World.tsx
+   * @see ../app/store.ts
    */
-  const hs = s / 2,
+  const s = useStore(selectS),
+    hs = s / 2,
     qs = hs / 2,
     es = qs / 2,
     ts = (es / 2) / 2,
     os = (ts / 2) / 2;
+
+  // TODO: move `selectCols` and `selectRows` into `World`
+  const x = useStore(selectX),
+    y = useStore(selectY),
+    r = -π / 2;
 
   return (
     <g transform={`translate(${x}, ${y}) rotate(${floor(rtod(r))})`}>
