@@ -1,6 +1,5 @@
-import { create } from "../lib/estate.ts";
+import { create, useEffect, useSyncExternalStore } from "../lib/estate.ts";
 import { caf, ceil, min, now, raf } from "../lib/free.ts";
-import { useEffect, useSyncExternalStore } from "../lib/real.ts";
 import { Hud } from "./Hud.tsx";
 import { World } from "./World.tsx";
 

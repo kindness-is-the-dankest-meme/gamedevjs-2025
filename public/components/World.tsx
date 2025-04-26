@@ -1,8 +1,8 @@
 import { grid, tapg } from "../app/grids.ts";
 import { paths } from "../app/paths.ts";
 import { rules } from "../app/rules.ts";
+import { useMemo } from "../lib/estate.ts";
 import { floor, π } from "../lib/free.ts";
-import { useMemo } from "../lib/real.ts";
 import { Boat } from "./Boat.tsx";
 import { Ponds } from "./Ponds.tsx";
 
