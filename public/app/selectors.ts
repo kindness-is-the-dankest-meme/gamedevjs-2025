@@ -11,3 +11,10 @@ export const selectOn = ({ on }: State) => on;
 export const selectOe = ({ oe }: State) => oe;
 export const selectOs = ({ os }: State) => os;
 export const selectOw = ({ ow }: State) => ow;
+
+export const selectV = ({ v }: State) => v;
+export const selectA = ({ a }: State) => a;
+
+export const selectX = ({ x }: State) => x;
+export const selectY = ({ y }: State) => y;
+export const selectR = ({ r }: State) => r;

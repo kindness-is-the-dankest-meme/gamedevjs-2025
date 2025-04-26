@@ -17,12 +17,12 @@ export type State = {
   ow: number;
 
   // boat
-  cx: number;
-  cy: number;
-  cr: number;
-  px: number;
-  py: number;
-  pr: number;
+  v: number;
+  a: number;
+
+  x: number;
+  y: number;
+  r: number;
 };
 
 export const store = create((): State => ({
@@ -41,12 +41,12 @@ export const store = create((): State => ({
   ow: 0,
 
   // boat
-  cx: 0,
-  cy: 0,
-  cr: -π / 2,
-  px: 0,
-  py: 0,
-  pr: -π / 2,
+  v: 0,
+  a: 0,
+
+  x: 0,
+  y: 0,
+  r: -π / 2,
 }));
 
 export const useStore = (selector: (state: State) => any) =>
