@@ -5,9 +5,9 @@ import { Hud } from "./Hud.tsx";
 import { World } from "./World.tsx";
 
 const gkeys = () => {
-  const { keys: ks, on, oe, os, ow } = store.get();
+  const { keys, on, oe, os, ow } = store.get();
 
-  if (ks.includes("w") || ks.includes("arrowup")) {
+  if (keys.includes("w") || keys.includes("arrowup")) {
     store.set((prev) => ({
       ...prev,
       on: min(prev.on + 1, 40),
@@ -20,7 +20,7 @@ const gkeys = () => {
     }));
   }
 
-  if (ks.includes("d") || ks.includes("arrowright")) {
+  if (keys.includes("d") || keys.includes("arrowright")) {
     store.set((prev) => ({
       ...prev,
       oe: min(prev.oe + 1, 40),
@@ -33,7 +33,7 @@ const gkeys = () => {
     }));
   }
 
-  if (ks.includes("s") || ks.includes("arrowdown")) {
+  if (keys.includes("s") || keys.includes("arrowdown")) {
     store.set((prev) => ({
       ...prev,
       os: min(prev.os + 1, 40),
@@ -46,7 +46,7 @@ const gkeys = () => {
     }));
   }
 
-  if (ks.includes("a") || ks.includes("arrowleft")) {
+  if (keys.includes("a") || keys.includes("arrowleft")) {
     store.set((prev) => ({
       ...prev,
       ow: min(prev.ow + 1, 40),
