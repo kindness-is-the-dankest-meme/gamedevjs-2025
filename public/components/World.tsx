@@ -1,8 +1,8 @@
 import { grid, tapg } from "../app/grids.ts";
 import { paths } from "../app/paths.ts";
 import { rules } from "../app/rules.ts";
-import { floor } from "../lib/free.ts";
-import { useEffect, useMemo, useState } from "../lib/real.ts";
+import { floor, π } from "../lib/free.ts";
+import { useMemo } from "../lib/real.ts";
 import { Boat } from "./Boat.tsx";
 import { Ponds } from "./Ponds.tsx";
 
@@ -17,16 +17,6 @@ const genp = (cols: number, rows: number) =>
 
 export const World = ({ cols, rows, size }: WorldProps) => {
   const ts = useMemo(() => tapg(genp(cols, rows)), [cols, rows]);
-
-  const [r, setR] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(
-      () => setR(() => (Date.now() / 1_000)),
-      10,
-    );
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <svg
@@ -46,7 +36,7 @@ export const World = ({ cols, rows, size }: WorldProps) => {
       <Boat
         x={(cols * size) / 2}
         y={(rows * size) / 2}
-        r={r}
+        r={-π / 2}
         s={floor(size * 0.8)}
       />
     </svg>
