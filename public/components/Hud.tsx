@@ -9,9 +9,31 @@ import { ArrowUp } from "./ArrowUp.tsx";
 export const Hud = () => {
   const size = useStore(selectSize);
   const keys = useStore(selectKeys);
+
   const kdwn = useCallback(
     (ks: string[]) => ks.some((k) => keys.includes(k)),
     [keys],
+  );
+
+  const skey = useCallback(
+    (sk: string) =>
+      store.set((prev) =>
+        !prev.keys.includes(sk) ? ({ ...prev, keys: [...prev.keys, sk] }) : prev
+      ),
+    [],
+  );
+
+  const ukey = useCallback(
+    (uk: string) =>
+      store.set((prev) =>
+        prev.keys.includes(uk)
+          ? ({
+            ...prev,
+            keys: prev.keys.filter((k) => k !== uk),
+          })
+          : prev
+      ),
+    [],
   );
 
   return (
@@ -20,21 +42,11 @@ export const Hud = () => {
         <button
           type="button"
           className={kdwn(["w", "arrowup"]) && "pressed"}
-          onMouseDown={() =>
-            store.set((prev) =>
-              !prev.keys.includes("arrowup")
-                ? ({ ...prev, keys: [...prev.keys, "arrowup"] })
-                : prev
-            )}
-          onMouseUp={() =>
-            store.set((prev) =>
-              prev.keys.includes("arrowup")
-                ? ({
-                  ...prev,
-                  keys: prev.keys.filter((k) => k !== "arrowup"),
-                })
-                : prev
-            )}
+          onMouseDown={() => skey("arrowup")}
+          onMouseUp={() => ukey("arrowup")}
+          onTouchCancel={() => ukey("arrowup")}
+          onTouchStart={() => skey("arrowup")}
+          onTouchEnd={() => ukey("arrowup")}
         >
           <ArrowUp size={size} />
         </button>
@@ -43,21 +55,11 @@ export const Hud = () => {
         <button
           type="button"
           className={kdwn(["d", "arrowright"]) && "pressed"}
-          onMouseDown={() =>
-            store.set((prev) =>
-              !prev.keys.includes("arrowright")
-                ? ({ ...prev, keys: [...prev.keys, "arrowright"] })
-                : prev
-            )}
-          onMouseUp={() =>
-            store.set((prev) =>
-              prev.keys.includes("arrowright")
-                ? ({
-                  ...prev,
-                  keys: prev.keys.filter((k) => k !== "arrowright"),
-                })
-                : prev
-            )}
+          onMouseDown={() => skey("arrowright")}
+          onMouseUp={() => ukey("arrowright")}
+          onTouchCancel={() => ukey("arrowright")}
+          onTouchStart={() => skey("arrowright")}
+          onTouchEnd={() => ukey("arrowright")}
         >
           <ArrowRight size={size} />
         </button>
@@ -66,21 +68,11 @@ export const Hud = () => {
         <button
           type="button"
           className={kdwn(["s", "arrowdown"]) && "pressed"}
-          onMouseDown={() =>
-            store.set((prev) =>
-              !prev.keys.includes("arrowdown")
-                ? ({ ...prev, keys: [...prev.keys, "arrowdown"] })
-                : prev
-            )}
-          onMouseUp={() =>
-            store.set((prev) =>
-              prev.keys.includes("arrowdown")
-                ? ({
-                  ...prev,
-                  keys: prev.keys.filter((k) => k !== "arrowdown"),
-                })
-                : prev
-            )}
+          onMouseDown={() => skey("arrowdown")}
+          onMouseUp={() => ukey("arrowdown")}
+          onTouchCancel={() => ukey("arrowdown")}
+          onTouchStart={() => skey("arrowdown")}
+          onTouchEnd={() => ukey("arrowdown")}
         >
           <ArrowDown size={size} />
         </button>
@@ -89,21 +81,11 @@ export const Hud = () => {
         <button
           type="button"
           className={kdwn(["a", "arrowleft"]) && "pressed"}
-          onMouseDown={() =>
-            store.set((prev) =>
-              !prev.keys.includes("arrowleft")
-                ? ({ ...prev, keys: [...prev.keys, "arrowleft"] })
-                : prev
-            )}
-          onMouseUp={() =>
-            store.set((prev) =>
-              prev.keys.includes("arrowleft")
-                ? ({
-                  ...prev,
-                  keys: prev.keys.filter((k) => k !== "arrowleft"),
-                })
-                : prev
-            )}
+          onMouseDown={() => skey("arrowleft")}
+          onMouseUp={() => ukey("arrowleft")}
+          onTouchCancel={() => ukey("arrowleft")}
+          onTouchStart={() => skey("arrowleft")}
+          onTouchEnd={() => ukey("arrowleft")}
         >
           <ArrowLeft size={size} />
         </button>
