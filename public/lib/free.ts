@@ -4,7 +4,7 @@ export type F<T> = T extends new (...args: infer A) => infer R
 
 export type Last<T extends any[]> = T extends [...infer _, infer L] ? L : never;
 
-export const { ceil, cos, floor, random, sin, PI: π } = Math;
+export const { ceil, cos, floor, max, min, random, sin, PI: π } = Math;
 export const ππ = π * 2;
 export const rtod = (r: number) => ((r * 180) / π) % 360;
 export const dtor = (d: number) => ((d * π) / 180) % ππ;
@@ -18,6 +18,9 @@ export const {
   is,
   keys,
 } = Object;
+const { now: n } = performance;
+export const now = n.bind(performance);
+
 export const {
   devicePixelRatio: dpr,
   requestAnimationFrame: raf,
