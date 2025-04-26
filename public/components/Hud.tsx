@@ -4,37 +4,33 @@ type HudProps = {
 
 export const Hud = ({ keys }: HudProps) => (
   <menu>
-    <li>
+    <li id="n">
       <button
         type="button"
-        name="n"
         disabled={keys.includes("w") || keys.includes("arrowup")}
       >
         &#11014;
       </button>
     </li>
-    <li>
+    <li id="e">
       <button
         type="button"
-        name="e"
         disabled={keys.includes("d") || keys.includes("arrowright")}
       >
         &#11157;
       </button>
     </li>
-    <li>
+    <li id="s">
       <button
         type="button"
-        name="s"
         disabled={keys.includes("s") || keys.includes("arrowdown")}
       >
         &#11015;
       </button>
     </li>
-    <li>
+    <li id="w">
       <button
         type="button"
-        name="w"
         disabled={keys.includes("a") || keys.includes("arrowleft")}
       >
         &#11013;
