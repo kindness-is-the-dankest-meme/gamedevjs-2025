@@ -39,6 +39,8 @@ forEach(
     fromEvent(globalThis, "resize"),
     fromEvent(globalThis, "keydown"),
     fromEvent(globalThis, "keyup"),
+    fromEvent(document, "visibilitychange"),
+    fromEvent(globalThis, "blur"),
     fromEvent(globalThis, "rpc"),
   ]),
   (e) => {
@@ -74,6 +76,20 @@ forEach(
         if (keysDown.delete(k)) {
           w.postMessage({ type: "keys", keys: keysDown.values().toArray() });
         }
+        break;
+      }
+
+      case "visibilitychange": {
+        if (event.target.visibilityState === "hidden") {
+          keysDown.clear();
+          w.postMessage({ type: "keys", keys: [] });
+        }
+        break;
+      }
+
+      case "blur": {
+        keysDown.clear();
+        w.postMessage({ type: "keys", keys: [] });
         break;
       }
 
