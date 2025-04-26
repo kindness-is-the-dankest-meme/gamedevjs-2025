@@ -137,7 +137,7 @@ export const useMemo = <T>(compute: () => T, deps?: unknown[]) => {
   return memo;
 };
 
-export const useStore = <T>(
+export const useSyncExternalStore = <T>(
   sub: (cb: () => void) => () => void,
   get: () => T,
 ): T => {
