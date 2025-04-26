@@ -1,10 +1,10 @@
 import { type State, useStore } from "../app/store.ts";
-import { selectCols, selectRows, selectSize } from "../app/selectors.ts";
-import { floor, rtod, π } from "../lib/free.ts";
+import { floor, rtod } from "../lib/free.ts";
 
 const selectS = ({ size }: State) => floor(size * 0.8);
-const selectX = (state: State) => selectCols(state) * selectSize(state) / 2;
-const selectY = (state: State) => selectRows(state) * selectSize(state) / 2;
+const selectCx = ({ cx }: State) => cx;
+const selectCy = ({ cy }: State) => cy;
+const selectCr = ({ cr }: State) => cr;
 
 export const Boat = () => {
   /**
@@ -34,10 +34,9 @@ export const Boat = () => {
     ts = (es / 2) / 2,
     os = (ts / 2) / 2;
 
-  // TODO: move `selectCols` and `selectRows` into `World`
-  const x = useStore(selectX),
-    y = useStore(selectY),
-    r = -π / 2;
+  const x = useStore(selectCx);
+  const y = useStore(selectCy);
+  const r = useStore(selectCr);
 
   return (
     <g transform={`translate(${x}, ${y}) rotate(${floor(rtod(r))})`}>
