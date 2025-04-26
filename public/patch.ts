@@ -26,7 +26,6 @@ export const patch = ({ op, path, value }: Patch): void => {
         return;
       }
 
-      console.log(patch);
       break;
     }
 
@@ -50,7 +49,7 @@ export const patch = ({ op, path, value }: Patch): void => {
         return;
       }
 
-      console.log(patch);
+      console.log({ op, path, value });
       break;
     }
 
@@ -70,12 +69,12 @@ export const patch = ({ op, path, value }: Patch): void => {
         return;
       }
 
-      console.log(patch);
+      console.log({ op, path, value });
       break;
     }
 
     default: {
-      console.log(patch);
+      console.log({ op, path, value });
     }
   }
 };

@@ -2,7 +2,7 @@ import { enablePatches, produceWithPatches } from "https://esm.sh/immer@10.1.1";
 import isEqual from "https://esm.sh/lodash-es@4.17.21/isEqual.js";
 import isPlainObject from "https://esm.sh/lodash-es@4.17.21/isPlainObject.js";
 import mergeWith from "https://esm.sh/lodash-es@4.17.21/mergeWith.js";
-import { App, store } from "./components/App.tsx";
+import { App } from "./components/App.tsx";
 import {
   fcev,
   forEach,
@@ -14,6 +14,7 @@ import {
 } from "./lib/free.ts";
 import { cbs, type El } from "./lib/real.ts";
 import { Msg } from "./types.ts";
+import { store } from "./app/store.ts";
 
 type Customizer = Last<Parameters<typeof mergeWith<any, any>>>;
 const customizer: Customizer = (a, b, k) => {

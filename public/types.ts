@@ -24,6 +24,10 @@ const InnerSize = z
     height,
   }));
 
+const VisibilityState = z.object({
+  visibilityState: z.enum(["visible", "hidden"]),
+});
+
 const Rpc = z.object({
   cbid: z.string(),
   args: z.tuple([z.any()]),
@@ -41,6 +45,13 @@ const KeyUpEvent = z.object({
   type: z.literal("keyup"),
   key: z.string(),
 });
+const VisibilityStateChangeEvent = z.object({
+  type: z.literal("visibilitychange"),
+  target: VisibilityState,
+});
+const BlurEvent = z.object({
+  type: z.literal("blur"),
+});
 const RpcEvent = z.object({
   type: z.literal("rpc"),
   detail: Rpc,
@@ -50,6 +61,8 @@ export const GlobalThisEvent = z.discriminatedUnion("type", [
   ResizeEvent,
   KeyDownEvent,
   KeyUpEvent,
+  VisibilityStateChangeEvent,
+  BlurEvent,
   RpcEvent,
 ]);
 

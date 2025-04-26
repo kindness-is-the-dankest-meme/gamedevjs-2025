@@ -1,48 +1,57 @@
 import { grid, tapg } from "../app/grids.ts";
 import { paths } from "../app/paths.ts";
 import { rules } from "../app/rules.ts";
-import { floor } from "../lib/free.ts";
-import { useEffect, useMemo, useState } from "../lib/real.ts";
+import { selectSize } from "../app/selectors.ts";
+import { type State, store, useStore } from "../app/store.ts";
+import { useEffect } from "../lib/estate.ts";
+import { ceil, floor, random } from "../lib/free.ts";
 import { Boat } from "./Boat.tsx";
-import { Pointer } from "./Pointer.tsx";
 import { Ponds } from "./Ponds.tsx";
-
-type WorldProps = {
-  cols: number;
-  rows: number;
-  size: number;
-};
 
 const genp = (cols: number, rows: number) =>
   grid(cols, rows).reduce<string[][]>(rules, []);
 
-export const World = ({ cols, rows, size }: WorldProps) => {
-  const ts = useMemo(() => tapg(genp(cols, rows)), [cols, rows]);
+const selectCols = ({ size, width }: State) => ceil(width / size);
+const selectRows = ({ size, height }: State) => ceil(height / size);
 
-  const [pointer, setPointer] = useState(true);
-  const [x, setX] = useState((cols * size) / 2 + size);
-  const [y, setY] = useState((rows * size) / 2);
-  const [r, setR] = useState(0);
+export const World = () => {
+  const size = useStore(selectSize);
+  const cols = useStore(selectCols);
+  const rows = useStore(selectRows);
 
   useEffect(() => {
-    const interval = setInterval(
-      () => setR(() => (Date.now() / 1_000)),
-      10,
-    );
-    return () => clearInterval(interval);
-  }, []);
+    if (cols === 0 || rows === 0) return;
+
+    store.set((prev) => {
+      const ts = tapg(genp(cols, rows));
+
+      let i = -1, j = -1;
+      while (i === -1 || j === -1) {
+        const k = floor(random() * ts.length);
+        const l = floor(random() * ts[k].length);
+
+        if (ts[k][l] === "█") {
+          i = k;
+          j = l;
+        }
+      }
+      const x = j * size + size / 2;
+      const y = i * size + size / 2;
+
+      return ({
+        ...prev,
+        ts,
+        x,
+        y,
+      });
+    });
+  }, [cols, rows]);
 
   return (
     <svg
       width={`${cols * size}px`}
       height={`${rows * size}px`}
       fill="none"
-      onPointerEnter={() => setPointer(true)}
-      onPointerLeave={() => setPointer(false)}
-      onPointerMove={({ x, y }: any) => {
-        setX(x);
-        setY(y);
-      }}
     >
       <defs>
         {paths(size).map(([id, d]) => (
@@ -52,14 +61,8 @@ export const World = ({ cols, rows, size }: WorldProps) => {
           </g>
         ))}
       </defs>
-      <Ponds ts={ts} s={size} />
-      <Boat
-        x={(cols * size) / 2}
-        y={(rows * size) / 2}
-        r={r}
-        s={floor(size * 0.8)}
-      />
-      {pointer && <Pointer x={x} y={y} />}
+      <Ponds />
+      <Boat />
     </svg>
   );
 };

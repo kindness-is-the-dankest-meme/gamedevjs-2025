@@ -1,41 +1,108 @@
-import { useEffect, useState } from "../lib/real.ts";
+import { selectKeys } from "../app/selectors.ts";
+import { store, useStore } from "../app/store.ts";
+import { useCallback } from "../lib/estate.ts";
 
-type HudProps = {
-  keys: string[];
-};
-
-export const Hud = ({ keys }: HudProps) => {
-  const [i, setI] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => setI((p) => p + 1), 10_000);
-    return () => clearInterval(interval);
-  }, []);
+export const Hud = () => {
+  const keys = useStore(selectKeys);
+  const kdwn = useCallback(
+    (ks: string[]) => ks.some((k) => keys.includes(k)),
+    [keys],
+  );
 
   return (
-    <section title={`pond #${i}`}>
-      <menu>
-        <li>
-          <button type="button" name="n" disabled={keys.includes("w")}>
-            &#11014;
-          </button>
-        </li>
-        <li>
-          <button type="button" name="e" disabled={keys.includes("d")}>
-            &#11157;
-          </button>
-        </li>
-        <li>
-          <button type="button" name="s" disabled={keys.includes("s")}>
-            &#11015;
-          </button>
-        </li>
-        <li>
-          <button type="button" name="w" disabled={keys.includes("a")}>
-            &#11013;
-          </button>
-        </li>
-      </menu>
-    </section>
+    <menu>
+      <li id="n">
+        <button
+          type="button"
+          className={kdwn(["w", "arrowup"]) && "pressed"}
+          onMouseDown={() =>
+            store.set((prev) =>
+              !prev.keys.includes("arrowup")
+                ? ({ ...prev, keys: [...prev.keys, "arrowup"] })
+                : prev
+            )}
+          onMouseUp={() =>
+            store.set((prev) =>
+              prev.keys.includes("arrowup")
+                ? ({
+                  ...prev,
+                  keys: prev.keys.filter((k) => k !== "arrowup"),
+                })
+                : prev
+            )}
+        >
+          &#11014;
+        </button>
+      </li>
+      <li id="e">
+        <button
+          type="button"
+          className={kdwn(["d", "arrowright"]) && "pressed"}
+          onMouseDown={() =>
+            store.set((prev) =>
+              !prev.keys.includes("arrowright")
+                ? ({ ...prev, keys: [...prev.keys, "arrowright"] })
+                : prev
+            )}
+          onMouseUp={() =>
+            store.set((prev) =>
+              prev.keys.includes("arrowright")
+                ? ({
+                  ...prev,
+                  keys: prev.keys.filter((k) => k !== "arrowright"),
+                })
+                : prev
+            )}
+        >
+          &#11157;
+        </button>
+      </li>
+      <li id="s">
+        <button
+          type="button"
+          className={kdwn(["s", "arrowdown"]) && "pressed"}
+          onMouseDown={() =>
+            store.set((prev) =>
+              !prev.keys.includes("arrowdown")
+                ? ({ ...prev, keys: [...prev.keys, "arrowdown"] })
+                : prev
+            )}
+          onMouseUp={() =>
+            store.set((prev) =>
+              prev.keys.includes("arrowdown")
+                ? ({
+                  ...prev,
+                  keys: prev.keys.filter((k) => k !== "arrowdown"),
+                })
+                : prev
+            )}
+        >
+          &#11015;
+        </button>
+      </li>
+      <li id="w">
+        <button
+          type="button"
+          className={kdwn(["a", "arrowleft"]) && "pressed"}
+          onMouseDown={() =>
+            store.set((prev) =>
+              !prev.keys.includes("arrowleft")
+                ? ({ ...prev, keys: [...prev.keys, "arrowleft"] })
+                : prev
+            )}
+          onMouseUp={() =>
+            store.set((prev) =>
+              prev.keys.includes("arrowleft")
+                ? ({
+                  ...prev,
+                  keys: prev.keys.filter((k) => k !== "arrowleft"),
+                })
+                : prev
+            )}
+        >
+          &#11013;
+        </button>
+      </li>
+    </menu>
   );
 };

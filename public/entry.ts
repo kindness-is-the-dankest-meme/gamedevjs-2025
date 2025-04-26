@@ -1,12 +1,4 @@
-import {
-  fevt,
-  forEach,
-  fromEvent,
-  fset,
-  fwkr,
-  keys,
-  merge,
-} from "./lib/free.ts";
+import { fevt, forEach, fromEvent, fset, fwkr, merge } from "./lib/free.ts";
 import { patch } from "./patch.ts";
 import { GlobalThisEvent, WorkerEvent } from "./types.ts";
 
@@ -47,6 +39,8 @@ forEach(
     fromEvent(globalThis, "resize"),
     fromEvent(globalThis, "keydown"),
     fromEvent(globalThis, "keyup"),
+    fromEvent(document, "visibilitychange"),
+    fromEvent(globalThis, "blur"),
     fromEvent(globalThis, "rpc"),
   ]),
   (e) => {
@@ -69,17 +63,33 @@ forEach(
       }
 
       case "keydown": {
-        if (!keysDown.has(event.key)) {
-          keysDown.add(event.key);
+        const k = event.key.toLowerCase();
+        if (!keysDown.has(k)) {
+          keysDown.add(k);
           w.postMessage({ type: "keys", keys: keysDown.values().toArray() });
         }
         break;
       }
 
       case "keyup": {
-        if (keysDown.delete(event.key)) {
+        const k = event.key.toLowerCase();
+        if (keysDown.delete(k)) {
           w.postMessage({ type: "keys", keys: keysDown.values().toArray() });
         }
+        break;
+      }
+
+      case "visibilitychange": {
+        if (event.target.visibilityState === "hidden") {
+          keysDown.clear();
+          w.postMessage({ type: "keys", keys: [] });
+        }
+        break;
+      }
+
+      case "blur": {
+        keysDown.clear();
+        w.postMessage({ type: "keys", keys: [] });
         break;
       }
 
