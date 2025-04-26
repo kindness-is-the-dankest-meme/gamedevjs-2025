@@ -9,11 +9,15 @@ export const nmap = amap({
   key: "data-key",
 });
 
-// TODO: serialize some other event properties
-const omap = (n: string) => ({ type, x, y, pointerType }: any) =>
+const omap = (n: string) => (event: any) => {
+  event.preventDefault();
+
+  // TODO: serialize some other event properties
+  const { type } = event;
   globalThis.dispatchEvent(
-    fcev("rpc", { detail: { cbid: n, args: [{ type, x, y, pointerType }] } }),
+    fcev("rpc", { detail: { cbid: n, args: [{ type }] } }),
   );
+};
 
 export const spur = (n: Node, cs: ChE[] | undefined): Node => (
   cs && cs.forEach((c) => n.appendChild(grow(c))), n

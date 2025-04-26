@@ -4,7 +4,7 @@ import { rules } from "../app/rules.ts";
 import { selectSize } from "../app/selectors.ts";
 import { type State, store, useStore } from "../app/store.ts";
 import { useEffect } from "../lib/estate.ts";
-import { ceil, floor, random } from "../lib/free.ts";
+import { ceil, floor, random, ππ } from "../lib/free.ts";
 import { Boat } from "./Boat.tsx";
 import { Ponds } from "./Ponds.tsx";
 
@@ -35,14 +35,13 @@ export const World = () => {
           j = l;
         }
       }
-      const x = j * size + size / 2;
-      const y = i * size + size / 2;
 
       return ({
         ...prev,
         ts,
-        x,
-        y,
+        x: j * size + size / 2,
+        y: i * size + size / 2,
+        r: ππ * random(),
       });
     });
   }, [cols, rows]);
@@ -56,7 +55,7 @@ export const World = () => {
       <defs>
         {paths(size).map(([id, d]) => (
           <g id={id} key={id}>
-            {d && <path d={d} className="tile" />}
+            {d && <path d={d} className="tile" fill="white" />}
             <rect width={size} height={size} />
           </g>
         ))}

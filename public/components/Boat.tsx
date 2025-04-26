@@ -14,7 +14,6 @@ export const Boat = () => {
    * | `hs`     | 16    |
    * | `qs`     | 8     |
    * | `es`     | 4     |
-   * | `ss`     | 2     |
    * | `ts`     | 1     |
    * | `os`     | 0.25  |
    *
@@ -48,27 +47,54 @@ export const Boat = () => {
           } -${hs} ${qs} Z`}
           stroke-linejoin="round"
         />
+        <filter id="boat-shadow-in">
+          <feDropShadow dx="0" dy="0" stdDeviation={ts} flood-color="#444" />
+        </filter>
+        <filter
+          id="boat-shadow-out"
+          x="-100%"
+          y="-100%"
+          width="300%"
+          height="300%"
+        >
+          <feDropShadow dx="0" dy="0" stdDeviation={qs} flood-color="#444" />
+        </filter>
       </defs>
       <clipPath id="clip-outline">
         <use href="#boat-outline" />
       </clipPath>
+      <use
+        href="#boat-outline"
+        fill="#444"
+        transform="scale(1.1)"
+        filter="url(#boat-shadow-out)"
+      />
       <g clip-path="url(#clip-outline)">
         <rect
+          id="boat-bottom"
           x={-hs}
           y={-(qs + es)}
           width={s}
           height={hs + qs}
-          fill="magenta"
+          fill="white"
         />
         <rect
+          id="boat-bench"
           x={-es}
           y={-(qs + es)}
           width={qs}
           height={hs + qs}
-          fill="yellow"
+          fill="white"
+          filter="url(#boat-shadow-out)"
         />
       </g>
-      <use href="#boat-outline" stroke="green" stroke-width={es} fill="none" />
+      <use
+        href="#boat-outline"
+        stroke="white"
+        stroke-width={es}
+        fill="none"
+        filter="url(#boat-shadow-in)"
+      />
     </g>
   );
 };

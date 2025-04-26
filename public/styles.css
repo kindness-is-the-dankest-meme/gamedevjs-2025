@@ -50,17 +50,6 @@ figure {
   place-content: center;
 }
 
-use.tile {
-  fill: rgba(0, 0, 0, 0.1);
-
-  stroke: lightblue;
-  stroke-width: 0.1px;
-}
-
-path.tile {
-  fill: white;
-}
-
 figcaption {
   position: absolute;
   top: 0;
