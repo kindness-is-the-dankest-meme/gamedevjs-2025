@@ -1,8 +1,13 @@
-import { selectKeys } from "../app/selectors.ts";
+import { selectKeys, selectSize } from "../app/selectors.ts";
 import { store, useStore } from "../app/store.ts";
 import { useCallback } from "../lib/estate.ts";
+import { ArrowDown } from "./ArrowDown.tsx";
+import { ArrowLeft } from "./ArrowLeft.tsx";
+import { ArrowRight } from "./ArrowRight.tsx";
+import { ArrowUp } from "./ArrowUp.tsx";
 
 export const Hud = () => {
+  const size = useStore(selectSize);
   const keys = useStore(selectKeys);
   const kdwn = useCallback(
     (ks: string[]) => ks.some((k) => keys.includes(k)),
@@ -31,7 +36,7 @@ export const Hud = () => {
                 : prev
             )}
         >
-          &#11014;
+          <ArrowUp size={size} />
         </button>
       </li>
       <li id="e">
@@ -54,7 +59,7 @@ export const Hud = () => {
                 : prev
             )}
         >
-          &#11157;
+          <ArrowRight size={size} />
         </button>
       </li>
       <li id="s">
@@ -77,7 +82,7 @@ export const Hud = () => {
                 : prev
             )}
         >
-          &#11015;
+          <ArrowDown size={size} />
         </button>
       </li>
       <li id="w">
@@ -100,7 +105,7 @@ export const Hud = () => {
                 : prev
             )}
         >
-          &#11013;
+          <ArrowLeft size={size} />
         </button>
       </li>
     </menu>
