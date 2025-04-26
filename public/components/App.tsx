@@ -1,16 +1,8 @@
-import { State, store, useStore } from "../app/store.ts";
+import { store } from "../app/store.ts";
 import { useFrame } from "../hooks/useFrame.ts";
-import { useEffect } from "../lib/estate.ts";
-import { caf, ceil, min, now, raf } from "../lib/free.ts";
+import { min } from "../lib/free.ts";
 import { Hud } from "./Hud.tsx";
 import { World } from "./World.tsx";
-
-const selectSwhk = ({ size, width, height, keys }: State) => ({
-  size,
-  width,
-  height,
-  keys,
-});
 
 const gkeys = () => {
   const { keys: ks, on, oe, os, ow } = store.get();
@@ -69,17 +61,12 @@ const gkeys = () => {
 };
 
 export const App = () => {
-  const { size, width, height } = useStore(selectSwhk);
   useFrame(gkeys);
 
   return (
     <>
       <figure>
-        <World
-          cols={ceil(width / size)}
-          rows={ceil(height / size)}
-          size={size}
-        />
+        <World />
         <figcaption>
           <Hud />
         </figcaption>

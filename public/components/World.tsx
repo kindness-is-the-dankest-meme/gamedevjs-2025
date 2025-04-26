@@ -1,21 +1,26 @@
+import { type State, useStore } from "../app/store.ts";
 import { grid, tapg } from "../app/grids.ts";
 import { paths } from "../app/paths.ts";
 import { rules } from "../app/rules.ts";
 import { useMemo } from "../lib/estate.ts";
-import { floor, π } from "../lib/free.ts";
+import { ceil, floor, π } from "../lib/free.ts";
 import { Boat } from "./Boat.tsx";
 import { Ponds } from "./Ponds.tsx";
-
-type WorldProps = {
-  cols: number;
-  rows: number;
-  size: number;
-};
 
 const genp = (cols: number, rows: number) =>
   grid(cols, rows).reduce<string[][]>(rules, []);
 
-export const World = ({ cols, rows, size }: WorldProps) => {
+const selectDims = ({ size, width, height }: State) => ({
+  size,
+  width,
+  height,
+});
+
+export const World = () => {
+  const { size, width, height } = useStore(selectDims);
+
+  const cols = useMemo(() => ceil(width / size), [width, size]);
+  const rows = useMemo(() => ceil(height / size), [height, size]);
   const ts = useMemo(() => tapg(genp(cols, rows)), [cols, rows]);
 
   return (
