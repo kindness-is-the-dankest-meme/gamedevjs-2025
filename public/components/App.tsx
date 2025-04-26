@@ -6,8 +6,9 @@ import { World } from "./World.tsx";
 
 const gkeys = () => {
   const { keys, on, oe, os, ow } = store.get();
+  const ikdwn = (ks: string[]) => ks.some((k) => keys.includes(k));
 
-  if (keys.includes("w") || keys.includes("arrowup")) {
+  if (ikdwn(["w", "arrowup"])) {
     store.set((prev) => ({
       ...prev,
       on: min(prev.on + 1, 40),
@@ -20,7 +21,7 @@ const gkeys = () => {
     }));
   }
 
-  if (keys.includes("d") || keys.includes("arrowright")) {
+  if (ikdwn(["d", "arrowright"])) {
     store.set((prev) => ({
       ...prev,
       oe: min(prev.oe + 1, 40),
@@ -33,7 +34,7 @@ const gkeys = () => {
     }));
   }
 
-  if (keys.includes("s") || keys.includes("arrowdown")) {
+  if (ikdwn(["s", "arrowdown"])) {
     store.set((prev) => ({
       ...prev,
       os: min(prev.os + 1, 40),
@@ -46,7 +47,7 @@ const gkeys = () => {
     }));
   }
 
-  if (keys.includes("a") || keys.includes("arrowleft")) {
+  if (ikdwn(["a", "arrowleft"])) {
     store.set((prev) => ({
       ...prev,
       ow: min(prev.ow + 1, 40),
