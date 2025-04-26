@@ -23,8 +23,16 @@ export const App = () => {
 
   return (
     <>
-      <World cols={ceil(width / size)} rows={ceil(height / size)} size={size} />
-      <Hud keys={keys} />
+      <figure>
+        <World
+          cols={ceil(width / size)}
+          rows={ceil(height / size)}
+          size={size}
+        />
+        <figcaption>
+          <Hud keys={keys} />
+        </figcaption>
+      </figure>
     </>
   );
 };
