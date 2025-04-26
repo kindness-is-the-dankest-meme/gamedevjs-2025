@@ -1,7 +1,7 @@
 import { useEffect } from "../lib/estate.ts";
 import { caf, now, raf } from "../lib/free.ts";
 
-type Fctx = {
+export type Fctx = {
   st: number;
   pt: number;
   ct: number;
