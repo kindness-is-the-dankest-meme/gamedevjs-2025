@@ -66,6 +66,27 @@ export const useEffect = (effect: Effect, deps?: unknown[]) => {
   }
 };
 
+export const useCallback = <T>(
+  callback: (...args: any[]) => T,
+  deps?: unknown[],
+) => {
+  if (!hctx) {
+    throw ferr("`useCallback` requires a component context");
+  }
+
+  const cbck = useHook(() => null);
+  const prev = useHook(() => null);
+  const { hooks, index } = hctx;
+
+  if (!prev || !deps || deps.some((d, i) => d !== prev[i])) {
+    hooks[index - 2] = callback;
+    hooks[index - 1] = deps || null;
+    return callback;
+  }
+
+  return cbck;
+};
+
 export const useMemo = <T>(compute: () => T, deps?: unknown[]) => {
   if (!hctx) {
     throw ferr("`useMemo` requires a component context");
