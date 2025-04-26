@@ -1,39 +1,8 @@
-import { create, useEffect, useSyncExternalStore } from "../lib/estate.ts";
+import { State, store, useStore } from "../app/store.ts";
+import { useEffect } from "../lib/estate.ts";
 import { caf, ceil, min, now, raf } from "../lib/free.ts";
 import { Hud } from "./Hud.tsx";
 import { World } from "./World.tsx";
-
-type State = {
-  size: number;
-  width: number;
-  height: number;
-  keys: string[];
-
-  // oars
-  on: number;
-  oe: number;
-  os: number;
-  ow: number;
-};
-
-export const store = create((): State => ({
-  size: 40,
-  width: 0,
-  height: 0,
-  keys: [],
-
-  // oars
-  on: 0,
-  oe: 0,
-  os: 0,
-  ow: 0,
-}));
-
-const useStore = (selector: (state: State) => any) =>
-  useSyncExternalStore(
-    store.sub,
-    () => selector(store.get()),
-  );
 
 const selectSwhk = ({ size, width, height, keys }: State) => ({
   size,
